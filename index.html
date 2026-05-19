@@ -3794,6 +3794,153 @@ section.light .accent{ color:var(--coral-deep); }
 }
 .value-claim .b strong{ color:var(--coral); font-weight:500; }
 
+/* ══════════════════════════════════════════════════════
+   Scarcity / FOMO — открыта запись, 20 мест, окно ~10 дней
+   ══════════════════════════════════════════════════════ */
+
+/* Маленький badge в hero — над кнопками */
+.hero-status{
+  display:inline-flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:22px 0 6px;
+  padding:10px 16px;
+  background:linear-gradient(90deg, rgba(255,111,97,.12), rgba(255,111,97,.04));
+  border:1px solid rgba(255,111,97,.32);
+  border-radius:999px;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:var(--ivory);
+}
+.hero-status .pulse{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--coral);
+  box-shadow:0 0 0 0 rgba(255,111,97,.7);
+  animation:fomo-pulse 1.8s ease-out infinite;
+  flex-shrink:0;
+}
+.hero-status .lbl{ color:var(--coral); font-weight:700; }
+.hero-status strong{
+  color:var(--ivory);
+  font-family:var(--sans);
+  font-size:13px;
+  letter-spacing:-0.005em;
+  text-transform:none;
+  font-weight:700;
+}
+.hero-status .sep{ color:var(--ivory); opacity:.35; }
+@keyframes fomo-pulse{
+  0%   { box-shadow:0 0 0 0   rgba(255,111,97,.55); }
+  70%  { box-shadow:0 0 0 12px rgba(255,111,97,0); }
+  100% { box-shadow:0 0 0 0   rgba(255,111,97,0); }
+}
+
+/* Большая карточка scarcity в CTA */
+.scarcity{
+  margin:36px auto 24px;
+  max-width:880px;
+  padding:28px 30px;
+  background:linear-gradient(180deg, rgba(255,111,97,.08), rgba(255,111,97,.02));
+  border:1px solid rgba(255,111,97,.30);
+  border-radius:22px;
+  box-shadow:0 24px 60px -28px rgba(255,111,97,.32);
+  position:relative;
+  overflow:hidden;
+}
+.scarcity-head{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family:var(--mono);
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--coral);
+  font-weight:700;
+  margin-bottom:18px;
+}
+.scarcity-head .pulse{
+  width:9px; height:9px; border-radius:50%;
+  background:var(--coral);
+  box-shadow:0 0 0 0 rgba(255,111,97,.7);
+  animation:fomo-pulse 1.8s ease-out infinite;
+}
+.scarcity-row{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:18px;
+}
+@media(min-width:640px){ .scarcity-row{ grid-template-columns:1fr 1fr; gap:24px; } }
+.scarcity-card{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:18px 20px;
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+}
+.scarcity-card .kicker{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ivory);
+  opacity:.55;
+  font-weight:600;
+}
+.scarcity-card .big{
+  font-family:var(--sans);
+  font-size:42px;
+  line-height:1;
+  font-weight:700;
+  letter-spacing:-0.02em;
+  color:var(--ivory);
+}
+.scarcity-card .big .u{
+  font-family:var(--serif);
+  font-style:italic;
+  font-weight:400;
+  font-size:24px;
+  color:var(--coral);
+  margin-left:6px;
+}
+.scarcity-card .sub{
+  font-size:13px;
+  line-height:1.5;
+  color:var(--ivory);
+  opacity:.65;
+  margin-top:4px;
+}
+.scarcity-note{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid rgba(255,255,255,.06);
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:14px;
+  line-height:1.55;
+  color:var(--ivory);
+  opacity:.82;
+}
+.scarcity-note .dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--coral);
+  margin-top:7px;
+  flex-shrink:0;
+  box-shadow:0 0 0 0 rgba(255,111,97,.7);
+  animation:fomo-pulse 1.8s ease-out infinite;
+}
+.scarcity-note .it{
+  color:var(--coral);
+  font-style:italic;
+  font-family:var(--serif);
+}
+
+/* Disabled CTA — визуально полноценные, hover работает, клик заблокирован */
+.btn.is-soon,
+.nav-cta.is-soon{ cursor:not-allowed; }
+
 </style>
 </head>
 <body>
@@ -3815,7 +3962,7 @@ section.light .accent{ color:var(--coral-deep); }
       <a href="#host">Ведущий</a>
       <a href="#cta">Запись</a>
     </div>
-    <a href="#cta" class="nav-cta">Записаться <span style="display:inline-flex"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></a>
+    <a href="#cta" class="nav-cta is-soon" data-soon aria-disabled="true">Записаться <span style="display:inline-flex"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span></a>
   </div>
 </nav>
 
@@ -3849,12 +3996,21 @@ section.light .accent{ color:var(--coral-deep); }
           <div>Длительность<strong>8 занятий · 2 месяца</strong></div>
         </div>
 
+        <div class="hero-status reveal d5">
+          <span class="pulse"></span>
+          <span class="lbl">Открыта запись</span>
+          <span class="sep">·</span>
+          <strong>Всего 20 мест</strong>
+          <span class="sep">·</span>
+          <span>группа собирается за ~10 дней</span>
+        </div>
+
         <div class="hero-ctas reveal d6">
-          <a href="#cta" class="btn" data-magnetic>
+          <a href="#cta" class="btn is-soon" data-magnetic data-soon aria-disabled="true">
             <span>Записаться на поток 3</span>
             <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
           </a>
-          <a href="#program" class="btn ghost">
+          <a href="#program" class="btn ghost is-soon" data-soon aria-disabled="true">
             <span>Программа курса</span>
             <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></span>
           </a>
@@ -5416,8 +5572,8 @@ section.light .accent{ color:var(--coral-deep); }
         <p>Аккредитация Минцифры России. Данные на собственных серверах в РФ — соответствие 152-ФЗ. Разрабатываем собственные ИИ-продукты и SaaS-решения.</p>
 
         <div class="clients">
-          <div class="ttl">Внедряем ИИ в бизнесе</div>
-          <div class="list">Телеканал «Вся Уфа» · агентство «Абсолют Медиа» · гостиничные сети · ритейл</div>
+          <div class="ttl">Сегменты, с которыми работаем</div>
+          <div class="list">Производство · Автоматизация бизнеса · СМИ · Гостиничный бизнес · Рекламный бизнес · Франчайзинговые сети · Ритейл</div>
         </div>
 
         <div class="practice">
@@ -5461,12 +5617,35 @@ section.light .accent{ color:var(--coral-deep); }
       <strong>сертификат</strong> + закрытое сообщество выпускников.
     </p>
 
+    <div class="scarcity reveal d3" aria-label="Запись на поток 3">
+      <div class="scarcity-head">
+        <span class="pulse"></span>
+        <span>Открыта запись на поток 3</span>
+      </div>
+      <div class="scarcity-row">
+        <div class="scarcity-card">
+          <span class="kicker">Всего в группе</span>
+          <span class="big">20<span class="u">мест</span></span>
+          <span class="sub">маленький поток — личный фокус ведущего, разбор каждой работы</span>
+        </div>
+        <div class="scarcity-card">
+          <span class="kicker">Окно записи</span>
+          <span class="big">~10<span class="u">дней</span></span>
+          <span class="sub">группа собирается за первые 10 дней после старта продаж</span>
+        </div>
+      </div>
+      <div class="scarcity-note">
+        <span class="dot"></span>
+        <span>Когда наберём <span class="it">20 человек</span> — приём на этот поток закрывается. Кто не успел — ждёт следующего набора.</span>
+      </div>
+    </div>
+
     <div class="cta-btns reveal d4">
-      <a href="#anketa" class="btn" data-magnetic>
+      <a href="#anketa" class="btn is-soon" data-magnetic data-soon aria-disabled="true">
         <span>Записаться на поток 3</span>
         <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
       </a>
-      <a href="#program" class="btn ghost">
+      <a href="#program" class="btn ghost is-soon" data-soon aria-disabled="true">
         <span>Программа PDF</span>
         <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg></span>
       </a>
@@ -5589,6 +5768,19 @@ window.addEventListener('pageshow', function(){
   });
   window.addEventListener('load', function(){
     window.scrollTo(0, 0);
+  });
+
+  /* ───── Disabled CTA: визуально живые, клики и навигация заблокированы ───── */
+  document.querySelectorAll('[data-soon]').forEach(function(el){
+    el.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+    });
+    el.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+      }
+    });
   });
 
   /* ───── Кастомный курсор-фонарик ───── */
