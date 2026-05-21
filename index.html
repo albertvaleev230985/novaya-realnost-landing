@@ -4127,6 +4127,109 @@ section.light .accent{ color:var(--coral-deep); }
   z-index:2;
 }
 
+/* Drag / swipe — управляется JS */
+.testimonials-track{
+  cursor:grab;
+  touch-action:pan-y;
+  user-select:none;
+}
+.testimonials-track.is-grabbing{ cursor:grabbing; }
+.testimonials-row.js-marquee{ animation:none !important; }
+.t-card video{ pointer-events:none; }
+.t-card{ -webkit-user-drag:none; user-select:none; }
+
+/* Лайтбокс отзывов */
+.t-lightbox{
+  position:fixed; inset:0;
+  background:rgba(5,8,15,.86);
+  -webkit-backdrop-filter:blur(20px);
+          backdrop-filter:blur(20px);
+  display:none;
+  align-items:center; justify-content:center;
+  z-index:9999;
+  padding:24px;
+  opacity:0;
+  transition:opacity 240ms ease;
+}
+.t-lightbox.is-open{ display:flex; opacity:1; }
+body.t-lightbox-open{ overflow:hidden; }
+
+.t-lightbox-stage{
+  position:relative;
+  width:min(420px, 100%);
+  aspect-ratio:9/16;
+  max-height:88vh;
+  border-radius:22px;
+  overflow:hidden;
+  background:#000;
+  box-shadow:0 40px 100px -20px rgba(255,111,97,.45);
+  transform:scale(.96);
+  transition:transform 320ms cubic-bezier(.16,1,.3,1);
+}
+.t-lightbox.is-open .t-lightbox-stage{ transform:scale(1); }
+
+.t-lightbox-stage video{
+  width:100%; height:100%;
+  object-fit:contain;
+  background:#000;
+  display:block;
+}
+.t-lightbox-meta{
+  position:absolute; left:0; right:0; bottom:0;
+  padding:60px 22px 22px;
+  background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.85) 70%);
+  pointer-events:none;
+}
+.t-lightbox-meta .name{
+  font-family:var(--sans);
+  font-size:18px;
+  font-weight:700;
+  color:var(--ivory);
+  letter-spacing:-0.005em;
+  margin-bottom:5px;
+}
+.t-lightbox-meta .role{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--coral);
+  font-weight:600;
+}
+.t-close{
+  position:absolute;
+  top:20px; right:20px;
+  width:44px; height:44px;
+  border-radius:50%;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);
+  color:var(--ivory);
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  -webkit-backdrop-filter:blur(10px);
+          backdrop-filter:blur(10px);
+  transition:background 200ms ease, border-color 200ms ease, transform 200ms ease;
+  z-index:2;
+}
+.t-close:hover{
+  background:rgba(255,111,97,.25);
+  border-color:var(--coral);
+  transform:rotate(90deg);
+}
+
+/* Мобайл: открываем во весь экран */
+@media (max-width:640px){
+  .t-lightbox{ padding:0; }
+  .t-lightbox-stage{
+    width:100%;
+    height:100%;
+    max-height:none;
+    border-radius:0;
+    aspect-ratio:auto;
+  }
+  .t-close{ top:14px; right:14px; }
+}
+
 </style>
 </head>
 <body>
@@ -5866,6 +5969,20 @@ section.light .accent{ color:var(--coral-deep); }
   </div>
 </section>
 
+<!-- Лайтбокс отзыва (один на всю страницу) -->
+<div class="t-lightbox" id="tLightbox" aria-hidden="true" role="dialog" aria-label="Видео-отзыв">
+  <button class="t-close" type="button" aria-label="Закрыть">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <div class="t-lightbox-stage">
+    <video controls playsinline preload="none"></video>
+    <div class="t-lightbox-meta">
+      <div class="name"></div>
+      <div class="role"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════════════ CTA + FOMO ═══════════════ -->
 <section class="s deeper cta" id="cta">
   <div class="starfield" id="starCta"></div>
@@ -6227,6 +6344,145 @@ window.addEventListener('pageshow', function(){
       m.classList.add('in');
     });
   }, 120);
+
+  /* ───── Карусель отзывов: drag/swipe + клик → лайтбокс ───── */
+  (function setupTestimonialsCarousel(){
+    var track = document.querySelector('.testimonials-track');
+    var row = document.querySelector('.testimonials-row');
+    if (!track || !row) return;
+
+    row.classList.add('js-marquee');
+
+    var SPEED = 28; // px/sec — ровно темп прежней CSS-анимации
+    var currentX = 0;
+    var halfWidth = 0;
+    var hovering = false;
+    var lbOpen = false;
+    var dragging = false;
+    var dragStartX = 0;
+    var dragStartCurrentX = 0;
+    var dragMoved = false;
+    var lastT = performance.now();
+
+    function recalcHalf(){
+      halfWidth = row.scrollWidth / 2;
+    }
+    setTimeout(recalcHalf, 0);
+    window.addEventListener('resize', recalcHalf);
+    document.querySelectorAll('.t-card video').forEach(function(v){
+      v.addEventListener('loadedmetadata', recalcHalf, { once:true });
+    });
+
+    function wrap(x){
+      if (halfWidth <= 0) return x;
+      while (x < 0) x += halfWidth;
+      while (x >= halfWidth) x -= halfWidth;
+      return x;
+    }
+
+    function step(t){
+      var dt = Math.min(0.05, (t - lastT) / 1000);
+      lastT = t;
+      if (!hovering && !lbOpen && !dragging){
+        currentX = wrap(currentX + SPEED * dt);
+      }
+      row.style.transform = 'translate3d(' + (-currentX) + 'px,0,0)';
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+
+    // Hover pause (desktop, мышь)
+    track.addEventListener('mouseenter', function(){ hovering = true; });
+    track.addEventListener('mouseleave', function(){ hovering = false; });
+
+    // Drag / swipe (мышь и тач — единый pointer API)
+    track.addEventListener('pointerdown', function(e){
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      dragging = true;
+      dragMoved = false;
+      dragStartX = e.clientX;
+      dragStartCurrentX = currentX;
+      track.classList.add('is-grabbing');
+      try { track.setPointerCapture(e.pointerId); } catch(_){}
+    });
+    track.addEventListener('pointermove', function(e){
+      if (!dragging) return;
+      var dx = e.clientX - dragStartX;
+      if (Math.abs(dx) > 5) dragMoved = true;
+      currentX = wrap(dragStartCurrentX - dx);
+    });
+    function endDrag(e){
+      if (!dragging) return;
+      dragging = false;
+      track.classList.remove('is-grabbing');
+      try { track.releasePointerCapture(e.pointerId); } catch(_){}
+    }
+    track.addEventListener('pointerup', endDrag);
+    track.addEventListener('pointercancel', endDrag);
+
+    /* Лайтбокс */
+    var lb = document.getElementById('tLightbox');
+    if (!lb) return;
+    var lbVideo = lb.querySelector('video');
+    var lbName = lb.querySelector('.t-lightbox-meta .name');
+    var lbRole = lb.querySelector('.t-lightbox-meta .role');
+    var lbClose = lb.querySelector('.t-close');
+
+    function pauseCardVideos(){
+      document.querySelectorAll('.t-card video').forEach(function(v){ v.pause(); });
+    }
+    function playCardVideos(){
+      document.querySelectorAll('.t-card video').forEach(function(v){
+        var p = v.play();
+        if (p && p.catch) p.catch(function(){});
+      });
+    }
+
+    function openLightbox(card){
+      var srcVideo = card.querySelector('video');
+      var src = srcVideo.currentSrc || srcVideo.src || srcVideo.getAttribute('src');
+      lbVideo.src = src;
+      try { lbVideo.currentTime = 0; } catch(_){}
+      lbName.textContent = card.querySelector('.name').textContent;
+      lbRole.textContent = card.querySelector('.role').textContent;
+      lb.classList.add('is-open');
+      lb.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('t-lightbox-open');
+      lbOpen = true;
+      pauseCardVideos();
+      lbVideo.muted = false;
+      var p = lbVideo.play();
+      if (p && p.catch) p.catch(function(){ /* возможен жест требуется */ });
+    }
+    function closeLightbox(){
+      lb.classList.remove('is-open');
+      lb.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('t-lightbox-open');
+      lbOpen = false;
+      try {
+        lbVideo.pause();
+        lbVideo.removeAttribute('src');
+        lbVideo.load();
+      } catch(_){}
+      playCardVideos();
+    }
+
+    lbClose.addEventListener('click', closeLightbox);
+    lb.addEventListener('click', function(e){
+      if (e.target === lb) closeLightbox();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && lbOpen) closeLightbox();
+    });
+
+    // Клик по карточке: игнорируем, если был drag
+    document.querySelectorAll('.t-card').forEach(function(card){
+      card.addEventListener('click', function(e){
+        if (dragMoved) { e.preventDefault(); e.stopPropagation(); return; }
+        openLightbox(card);
+      });
+    });
+  })();
 
 })();
 </script>
