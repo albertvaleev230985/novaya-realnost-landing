@@ -790,7 +790,28 @@ section.light .accent{ color:var(--coral-deep); }
   50%{ opacity:.55; transform:translateY(-3px); }
 }
 
-/* Спутник на орбите — красивая SVG-модель */
+/* Орбитальное кольцо — fade-in */
+.globe .sat-track{
+  opacity:0;
+  animation:satTrackFade 1s 2.2s ease forwards;
+}
+@keyframes satTrackFade{ to{ opacity:1; } }
+
+/* Спутник на орбите — fade-in + бесконечное вращение вокруг центра планеты.
+   transform-box:view-box + transform-origin:50% 50% даёт центр viewBox 0 0 600 600.
+   На старых iOS Safari работает за счёт placeholder-rect внутри группы,
+   который растягивает bbox на весь viewBox. */
+.globe .sat-orbit{
+  opacity:0;
+  transform-box:view-box;
+  transform-origin:50% 50%;
+  animation:
+    satOrbitFade 0.8s 2.6s ease forwards,
+    satOrbitSpin 28s 2.6s linear infinite;
+}
+@keyframes satOrbitFade{ to{ opacity:1; } }
+@keyframes satOrbitSpin{ to{ transform:rotate(360deg); } }
+
 .globe .sat-body{
   filter:drop-shadow(0 0 10px rgba(255,111,97,0.7));
 }
@@ -3031,12 +3052,28 @@ section.light .accent{ color:var(--coral-deep); }
   to  { opacity:1; transform:translate(-50%, 0); }
 }
 
-/* Ракета — появляется после того как Россия вспыхнула */
-.fomo .rocket-orbit{ opacity:0; }
-.fomo.in .rocket-orbit{ animation:fomoRocketAppear 1s 5.5s ease forwards; }
-@keyframes fomoRocketAppear{
-  from{ opacity:0; }
-  to  { opacity:1; }
+/* Ракета — появляется после того как Россия вспыхнула, потом крутится по орбите
+   и заныривает за планету в средней части круга.
+   placeholder-rect внутри .rocket-orbit фиксирует bbox на весь viewBox 0 0 400 400,
+   чтобы transform-origin крутился вокруг (200,200), а не вокруг ракеты. */
+.fomo .rocket-orbit{
+  opacity:0;
+  transform-box:view-box;
+  transform-origin:50% 50%;
+}
+.fomo.in .rocket-orbit{
+  animation:
+    rocketSpin 14s 5.5s linear infinite,
+    rocketDive 14s 5.5s linear infinite;
+}
+@keyframes rocketSpin{
+  from{ transform:rotate(0deg);   }
+  to  { transform:rotate(360deg); }
+}
+@keyframes rocketDive{
+  0%,   42%  { opacity:1; }
+  50%,  68%  { opacity:0; }
+  75%, 100%  { opacity:1; }
 }
 .fomo .mini-globe .glow-bg{
   fill:url(#fomoGlow);
@@ -4392,13 +4429,12 @@ body.t-lightbox-open{ overflow:hidden; }
 
             <!-- Орбитальное кольцо спутника -->
             <ellipse class="sat-track" cx="300" cy="300" rx="288" ry="282"
-                     fill="none" stroke="rgba(255,111,97,0.18)" stroke-width="1" stroke-dasharray="2 8"
-                     opacity="0">
-              <animate attributeName="opacity" from="0" to="1" dur="1s" begin="2.2s" fill="freeze"/>
-            </ellipse>
+                     fill="none" stroke="rgba(255,111,97,0.18)" stroke-width="1" stroke-dasharray="2 8"/>
 
             <!-- Спутник на орбите -->
-            <g class="sat-orbit" opacity="0">
+            <g class="sat-orbit">
+              <!-- placeholder, фиксирует bbox на центр viewBox для transform-origin -->
+              <rect x="0" y="0" width="600" height="600" fill="none" pointer-events="none"/>
               <g class="sat-body" transform="translate(588 300)">
                 <!-- Левая солнечная панель -->
                 <rect x="-24" y="-7" width="14" height="14" fill="rgba(255,111,97,.18)" stroke="var(--coral)" stroke-width="1"/>
@@ -4426,10 +4462,6 @@ body.t-lightbox-open{ overflow:hidden; }
                 <circle cx="0" cy="-16" r="2" fill="var(--coral)"/>
                 <circle cx="0" cy="-16" r="3.5" fill="none" stroke="var(--coral)" stroke-width=".6" opacity=".5"/>
               </g>
-              <animate attributeName="opacity" from="0" to="1" dur="0.8s" begin="2.6s" fill="freeze"/>
-              <animateTransform attributeName="transform" attributeType="XML"
-                                type="rotate" from="0 300 300" to="360 300 300"
-                                dur="28s" begin="2.6s" repeatCount="indefinite"/>
             </g>
 
           </svg>
@@ -6098,6 +6130,8 @@ body.t-lightbox-open{ overflow:hidden; }
 
           <!-- РАКЕТА: орбитальная группа вращается вокруг центра планеты (200, 200) -->
           <g class="rocket-orbit">
+            <!-- placeholder, фиксирует bbox на весь viewBox для transform-origin -->
+            <rect x="0" y="0" width="400" height="400" fill="none" pointer-events="none"/>
             <!-- Ракета как единое целое: rotate(180) разворачивает нос по ходу движения по часовой стрелке -->
             <g class="rocket-body" transform="translate(380, 200) rotate(180)">
               <!-- Корпус -->
@@ -6114,15 +6148,6 @@ body.t-lightbox-open{ overflow:hidden; }
                 <path d="M -1.5 8 Q -0.5 11, 0 13 Q 0.5 11, 1.5 8 Z" fill="#FFE5A0"/>
               </g>
             </g>
-            <!-- Плавное вращение всей группы вокруг центра планеты -->
-            <animateTransform attributeName="transform" attributeType="XML"
-                              type="rotate" from="0 200 200" to="360 200 200"
-                              dur="14s" repeatCount="indefinite"/>
-            <!-- Заныривание за планету: opacity ровно в той фазе, когда ракета "позади" сферы -->
-            <animate attributeName="opacity"
-                     values="1; 1; 1; 0; 0; 0; 1; 1; 1"
-                     keyTimes="0; 0.35; 0.42; 0.5; 0.6; 0.68; 0.75; 0.82; 1"
-                     dur="14s" repeatCount="indefinite"/>
           </g>
         </svg>
         <!-- Подпись «Россия» под центральной точкой -->
