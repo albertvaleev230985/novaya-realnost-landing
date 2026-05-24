@@ -4611,6 +4611,86 @@ body.t-lightbox-open{ overflow:hidden; }
 .ratings-grid.is-paused .r-col{ animation-play-state:paused; }
 
 /* ══════════════════════════════════════════════════════
+   Disclosure — раскрывающиеся блоки за коралловой кнопкой
+   (нативный <details><summary> + кастомный дизайн)
+   ══════════════════════════════════════════════════════ */
+.disclosure{
+  margin:36px 0;
+  text-align:center;
+}
+.disclosure-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  padding:16px 28px;
+  background:var(--coral);
+  color:var(--night);
+  border:none;
+  border-radius:99px;
+  font-family:var(--sans);
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:-0.005em;
+  cursor:pointer;
+  list-style:none;
+  position:relative;
+  overflow:hidden;
+  transition:background 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+}
+.disclosure-toggle::-webkit-details-marker{ display:none; }
+.disclosure-toggle::marker{ display:none; content:''; }
+.disclosure-toggle::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg, transparent 30%, rgba(255,255,255,.30) 50%, transparent 70%);
+  transform:translateX(-100%);
+  transition:transform 700ms cubic-bezier(.16,1,.3,1);
+  pointer-events:none;
+}
+.disclosure-toggle:hover::before{ transform:translateX(100%); }
+.disclosure-toggle:hover{
+  background:var(--coral-deep);
+  transform:translateY(-2px);
+  box-shadow:0 16px 40px -10px var(--coral-glow);
+}
+.disclosure-toggle .dt-chev{
+  display:inline-flex;
+  transition:transform 280ms cubic-bezier(.16,1,.3,1);
+}
+.disclosure[open] .disclosure-toggle .dt-chev{
+  transform:rotate(180deg);
+}
+
+/* Вариант с «горящей» кнопкой — мягкий пульсирующий glow */
+.disclosure-toggle.is-glow{
+  box-shadow:0 0 0 0 rgba(255,111,97,.55), 0 14px 36px -10px var(--coral-glow);
+  animation:disclosure-pulse 2.4s ease-in-out infinite;
+}
+.disclosure[open] .disclosure-toggle.is-glow{
+  animation:none;
+  box-shadow:0 14px 36px -10px var(--coral-glow);
+}
+@keyframes disclosure-pulse{
+  0%, 100% { box-shadow:0 0 0 0   rgba(255,111,97,.55), 0 14px 36px -10px var(--coral-glow); }
+  50%      { box-shadow:0 0 0 14px rgba(255,111,97,0),  0 18px 44px -8px  var(--coral-glow); }
+}
+
+.disclosure-body{
+  margin-top:34px;
+  text-align:left;
+  animation:disclosure-fade 360ms ease-out;
+}
+@keyframes disclosure-fade{
+  from { opacity:0; transform:translateY(-8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@media (prefers-reduced-motion: reduce){
+  .disclosure-toggle.is-glow{ animation:none; }
+  .disclosure-body{ animation:none; }
+}
+
+/* ══════════════════════════════════════════════════════
    Модалка «Записаться» — форма + спасибо
    ══════════════════════════════════════════════════════ */
 .signup-modal{
@@ -6265,6 +6345,13 @@ body.signup-open{ overflow:hidden; }
       Поработаем <strong>с западными</strong> нейросетями: разберём VPN, оплату, обход блокировок — на всё есть решение, работать будете без проблем. Дальше — <strong>китайская волна</strong>, которая уже не уступает западникам, а часто бесплатна и без VPN. И <strong>российский стек</strong> — без VPN, юридически чисто, на ряде задач сильнее западных. Покажем, на каких именно.
     </div>
 
+    <details class="disclosure reveal d3">
+      <summary class="disclosure-toggle">
+        <span class="dt-label">С какими нейросетями работаем</span>
+        <span class="dt-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </summary>
+      <div class="disclosure-body">
+
     <div class="stack-groups">
 
       <div class="stack-group reveal d1">
@@ -6351,6 +6438,8 @@ body.signup-open{ overflow:hidden; }
       </div>
 
     </div>
+      </div>
+    </details>
 
     <div class="stack-own reveal d2">
       <div class="n">5–10</div>
@@ -6418,7 +6507,14 @@ body.signup-open{ overflow:hidden; }
 
     </div>
 
-    <!-- Две сетки примеров: личные / рабочие -->
+    <!-- Две сетки примеров: личные / рабочие — за раскрывающейся кнопкой -->
+    <details class="disclosure reveal d3">
+      <summary class="disclosure-toggle is-glow">
+        <span class="dt-label">Примеры цифровых сотрудников</span>
+        <span class="dt-chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+      </summary>
+      <div class="disclosure-body">
+
     <div class="assistants-split">
 
       <div class="asst-col reveal d1">
@@ -6469,6 +6565,8 @@ body.signup-open{ overflow:hidden; }
       </div>
 
     </div>
+      </div>
+    </details>
 
     <!-- Финальная плашка про Copilot и экзоскелет -->
     <div class="copilot-claim reveal d2">
