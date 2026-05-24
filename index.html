@@ -5061,6 +5061,302 @@ body.signup-open{ overflow:hidden; }
     animation:none;
   }
 }
+
+/* ══════════════════════════════════════════════════════
+   Маскот-бычок · sticky widget + модалка вопроса
+   ══════════════════════════════════════════════════════ */
+.mascot{
+  position:fixed;
+  right:24px; bottom:24px;
+  z-index:9000;
+  width:120px; height:130px;
+  cursor:pointer;
+  pointer-events:auto;
+  user-select:none;
+  -webkit-user-select:none;
+  filter:drop-shadow(0 8px 22px rgba(0,0,0,.4));
+  transition:transform 240ms cubic-bezier(.16,1,.3,1);
+}
+.mascot:hover{ transform:translateY(-4px) scale(1.05); }
+.mascot:active{ transform:scale(.96); }
+.mascot img{
+  width:100%; height:100%;
+  display:block;
+  object-fit:contain;
+  image-rendering:-webkit-optimize-contrast;
+  image-rendering:crisp-edges;
+  pointer-events:none;
+}
+
+/* Bubble «Чем могу помочь?» */
+.mascot-bubble{
+  position:absolute;
+  right:118px;
+  bottom:28px;
+  background:var(--ivory);
+  color:var(--night);
+  padding:12px 18px;
+  border-radius:16px;
+  font-family:var(--sans);
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:-0.005em;
+  line-height:1.3;
+  white-space:nowrap;
+  box-shadow:0 12px 32px -8px rgba(0,0,0,.6);
+  pointer-events:none;
+  opacity:0;
+  transform:translateX(6px) scale(.94);
+  transition:opacity 280ms ease, transform 280ms cubic-bezier(.16,1,.3,1);
+}
+.mascot-bubble::after{
+  content:'';
+  position:absolute;
+  right:-7px; bottom:18px;
+  width:0; height:0;
+  border:7px solid transparent;
+  border-left-color:var(--ivory);
+  border-right:0;
+}
+.mascot.is-bubble .mascot-bubble{
+  opacity:1;
+  transform:translateX(0) scale(1);
+  pointer-events:auto;
+}
+.mascot-bubble .accent{ color:var(--coral); }
+
+/* Hint-точка-индикатор: лёгкое пульсирующее коралл-кольцо вокруг маскота при «waiting» */
+.mascot::before{
+  content:'';
+  position:absolute;
+  inset:8px;
+  border-radius:50%;
+  background:radial-gradient(circle at center, rgba(255,111,97,.25) 0%, transparent 70%);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 400ms ease;
+}
+.mascot.is-attention::before{
+  opacity:1;
+  animation:mascot-attention 2.4s ease-in-out infinite;
+}
+@keyframes mascot-attention{
+  0%, 100% { transform:scale(.95); opacity:.4; }
+  50%      { transform:scale(1.1); opacity:.85; }
+}
+
+/* На мобайле — компактнее, bubble уже не sticky, появляется только на тап */
+@media (max-width:640px){
+  .mascot{
+    right:16px; bottom:16px;
+    width:80px; height:88px;
+  }
+  .mascot-bubble{
+    right:auto; left:50%;
+    bottom:96px;
+    transform:translateX(-50%) scale(.94);
+    font-size:13px;
+    padding:10px 14px;
+  }
+  .mascot-bubble::after{
+    right:auto; left:50%;
+    bottom:-7px; top:auto;
+    margin-left:-7px;
+    border:7px solid transparent;
+    border-top-color:var(--ivory);
+    border-bottom:0;
+  }
+  .mascot.is-bubble .mascot-bubble{
+    transform:translateX(-50%) scale(1);
+  }
+}
+
+/* Когда какая-то модалка открыта — маскот спрятан */
+body.signup-open .mascot,
+body.ask-open .mascot,
+body.t-lightbox-open .mascot{
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 200ms ease;
+}
+
+/* ─── Модалка-вопрос ─── */
+.ask-modal{
+  position:fixed; inset:0;
+  background:rgba(5,8,15,.86);
+  -webkit-backdrop-filter:blur(20px);
+          backdrop-filter:blur(20px);
+  display:none;
+  align-items:center; justify-content:center;
+  z-index:10000;
+  padding:24px;
+  opacity:0;
+  transition:opacity 240ms ease;
+}
+.ask-modal.is-open{ display:flex; opacity:1; }
+body.ask-open{ overflow:hidden; }
+
+.ask-card{
+  position:relative;
+  width:100%;
+  max-width:460px;
+  max-height:92vh;
+  overflow-y:auto;
+  padding:30px 28px 26px;
+  background:linear-gradient(180deg, #15192B 0%, #0C1124 100%);
+  border:1px solid rgba(255,111,97,.32);
+  border-radius:24px;
+  box-shadow:0 40px 100px -20px rgba(255,111,97,.4);
+  color:var(--ivory);
+  transform:scale(.96) translateY(8px);
+  transition:transform 320ms cubic-bezier(.16,1,.3,1);
+}
+.ask-modal.is-open .ask-card{ transform:scale(1) translateY(0); }
+.ask-card[hidden]{ display:none; }
+
+.ask-close{
+  position:absolute;
+  top:14px; right:14px;
+  width:36px; height:36px;
+  border-radius:50%;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.14);
+  color:var(--ivory);
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:background 200ms ease, border-color 200ms ease, transform 200ms ease;
+  z-index:2;
+}
+.ask-close:hover{
+  background:rgba(255,111,97,.22);
+  border-color:var(--coral);
+  transform:rotate(90deg);
+}
+
+.ask-head{
+  display:flex; align-items:center; gap:14px;
+  margin-bottom:18px;
+}
+.ask-head-icon{
+  width:54px; height:54px;
+  flex-shrink:0;
+  background-size:contain;
+  background-repeat:no-repeat;
+  background-position:center;
+}
+.ask-head h3{
+  margin:0 0 4px;
+  font-family:var(--sans);
+  font-size:22px;
+  line-height:1.15;
+  font-weight:700;
+  color:var(--ivory);
+  letter-spacing:-0.015em;
+}
+.ask-head .sub{
+  font-size:13px;
+  line-height:1.4;
+  color:var(--ivory);
+  opacity:.65;
+}
+
+.ask-form{
+  display:flex; flex-direction:column; gap:12px;
+  margin-top:6px;
+}
+.ask-field{
+  display:flex; flex-direction:column; gap:6px;
+}
+.ask-field .lbl{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ivory);
+  opacity:.55;
+  font-weight:600;
+}
+.ask-field .opt{ text-transform:none; letter-spacing:0; opacity:.7; }
+.ask-field input,
+.ask-field textarea{
+  width:100%;
+  padding:12px 14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:10px;
+  color:var(--ivory);
+  font-family:var(--sans);
+  font-size:14px;
+  letter-spacing:-0.005em;
+  transition:border-color 180ms ease, background 180ms ease;
+  -webkit-appearance:none;
+  appearance:none;
+  resize:none;
+}
+.ask-field textarea{
+  min-height:96px;
+  line-height:1.45;
+  resize:vertical;
+}
+.ask-field input::placeholder,
+.ask-field textarea::placeholder{ color:rgba(244,241,234,.32); }
+.ask-field input:focus,
+.ask-field textarea:focus{
+  outline:none;
+  background:rgba(255,255,255,.06);
+  border-color:var(--coral);
+}
+.ask-field input.is-error,
+.ask-field textarea.is-error{
+  border-color:#ff5a4d;
+  background:rgba(255,90,77,.06);
+}
+
+.ask-submit{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  padding:14px 22px;
+  margin-top:6px;
+  background:var(--coral);
+  color:var(--night);
+  border:none;
+  border-radius:99px;
+  font-family:var(--sans);
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transition:background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+.ask-submit:hover{
+  background:var(--coral-deep);
+  transform:translateY(-1px);
+  box-shadow:0 12px 32px -8px var(--coral-glow);
+}
+.ask-submit:disabled{ opacity:.55; cursor:wait; }
+.ask-submit.is-loading .ask-submit-label::after{ content:'…'; animation:dots 1s steps(3,end) infinite; }
+.ask-disclaimer{
+  margin:10px 0 0;
+  font-size:11px;
+  line-height:1.4;
+  color:var(--ivory);
+  opacity:.5;
+  text-align:center;
+}
+
+/* Шаг «спасибо» в ask-modal */
+.ask-step-thanks{ text-align:center; }
+.ask-thanks-name{ color:var(--coral); }
+.ask-check{
+  width:62px; height:62px;
+  margin:6px auto 14px;
+  border-radius:50%;
+  background:rgba(255,111,97,.16);
+  border:1px solid var(--coral);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--coral);
+  box-shadow:0 0 0 6px rgba(255,111,97,.08);
+}
 .signup-contacts{
   display:flex; flex-direction:column; gap:10px;
   margin-top:22px;
@@ -6971,6 +7267,63 @@ body.signup-open{ overflow:hidden; }
   </div>
 </section>
 
+<!-- ═══════════════ МАСКОТ — sticky widget ═══════════════ -->
+<div class="mascot" id="mascot" role="button" aria-label="Задать вопрос">
+  <div class="mascot-bubble" id="mascotBubble">Чем могу <span class="accent">помочь?</span></div>
+  <img id="mascotImg" src="mascot/idle/00.webp" alt="Маскот neovida" draggable="false">
+</div>
+
+<!-- ═══════════════ МОДАЛКА «ЗАДАТЬ ВОПРОС» ═══════════════ -->
+<div class="ask-modal" id="askModal" aria-hidden="true" role="dialog" aria-labelledby="askTitle">
+  <button class="ask-close" type="button" aria-label="Закрыть">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+
+  <!-- Шаг 1: форма вопроса -->
+  <div class="ask-card ask-step-form" data-step="form">
+    <div class="ask-head">
+      <img class="ask-head-icon" src="mascot/waving/00.webp" alt="">
+      <div>
+        <h3 id="askTitle">Задайте вопрос</h3>
+        <div class="sub">Альберт ответит лично в Telegram в течение дня.</div>
+      </div>
+    </div>
+
+    <form class="ask-form" id="askForm" autocomplete="on" novalidate>
+      <label class="ask-field">
+        <span class="lbl">Имя</span>
+        <input type="text" name="name" required maxlength="80" autocomplete="given-name" placeholder="Как вас зовут">
+      </label>
+      <label class="ask-field">
+        <span class="lbl">Telegram <span class="opt">для ответа</span></span>
+        <input type="text" name="telegram" required maxlength="80" placeholder="@username">
+      </label>
+      <label class="ask-field">
+        <span class="lbl">Вопрос</span>
+        <textarea name="question" required minlength="3" maxlength="800" rows="4" placeholder="Что хотите узнать о курсе?"></textarea>
+      </label>
+
+      <!-- honeypot -->
+      <input type="text" name="company" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;" aria-hidden="true">
+
+      <button type="submit" class="ask-submit">
+        <span class="ask-submit-label">Отправить вопрос</span>
+        <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+      </button>
+      <p class="ask-disclaimer">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
+    </form>
+  </div>
+
+  <!-- Шаг 2: спасибо -->
+  <div class="ask-card ask-step-thanks" data-step="thanks" hidden>
+    <div class="ask-check">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+    </div>
+    <h3 class="signup-title">Спасибо, <span class="ask-thanks-name">друг</span>!</h3>
+    <p class="signup-sub">Вопрос ушёл Альберту. Он ответит вам в Telegram в течение дня — обычно гораздо быстрее.</p>
+  </div>
+</div>
+
 <!-- ═══════════════ МОДАЛКА «ЗАПИСАТЬСЯ» ═══════════════ -->
 <div class="signup-modal" id="signupModal" aria-hidden="true" role="dialog" aria-labelledby="signupTitle">
   <button class="signup-close" type="button" aria-label="Закрыть">
@@ -7636,6 +7989,247 @@ if ('scrollRestoration' in history) {
       m.classList.add('in');
     });
   }, 120);
+
+  /* ───── Маскот — state machine + bubble + ask-modal ───── */
+  (function setupMascot(){
+    var mascot = document.getElementById('mascot');
+    var img = document.getElementById('mascotImg');
+    var bubble = document.getElementById('mascotBubble');
+    if (!mascot || !img) return;
+
+    // Состояния и кадры
+    var FRAMES = {
+      idle:    { count: 6, fps: 6,  loop: true  },
+      waiting: { count: 6, fps: 4,  loop: true  },
+      waving:  { count: 4, fps: 8,  loop: false, next: 'idle' },
+      jumping: { count: 5, fps: 10, loop: false, next: 'idle' }
+    };
+
+    var currentState = 'idle';
+    var currentFrame = 0;
+    var frameTimer = null;
+    var idleTimer = null;
+    var spontaneousTimer = null;
+    var IDLE_DELAY = 9000;   // 9 сек простоя → задумывается
+    var SPONTANEOUS_MIN = 18000, SPONTANEOUS_MAX = 32000; // случайные «оживляющие» движения
+
+    function pad(n){ return n < 10 ? '0' + n : '' + n; }
+
+    function play(state){
+      if (!FRAMES[state]) state = 'idle';
+      currentState = state;
+      currentFrame = 0;
+      if (frameTimer) clearTimeout(frameTimer);
+      tick();
+    }
+    function tick(){
+      var cfg = FRAMES[currentState];
+      img.src = 'mascot/' + currentState + '/' + pad(currentFrame) + '.webp';
+      currentFrame++;
+      if (currentFrame >= cfg.count){
+        if (cfg.loop) {
+          currentFrame = 0;
+        } else {
+          play(cfg.next || 'idle');
+          return;
+        }
+      }
+      frameTimer = setTimeout(tick, 1000 / cfg.fps);
+    }
+
+    function showBubble(){
+      mascot.classList.add('is-bubble', 'is-attention');
+    }
+    function hideBubble(){
+      mascot.classList.remove('is-bubble', 'is-attention');
+    }
+
+    function scheduleSpontaneous(){
+      if (spontaneousTimer) clearTimeout(spontaneousTimer);
+      var ms = SPONTANEOUS_MIN + Math.random() * (SPONTANEOUS_MAX - SPONTANEOUS_MIN);
+      spontaneousTimer = setTimeout(function(){
+        // Не отвлекаем если bubble показан или другая анимация
+        if (currentState === 'idle'){
+          var anims = ['waving', 'jumping'];
+          play(anims[Math.floor(Math.random() * anims.length)]);
+        }
+        scheduleSpontaneous();
+      }, ms);
+    }
+
+    function resetIdleClock(){
+      if (idleTimer) clearTimeout(idleTimer);
+      // Если был waiting и/или bubble — возвращаемся к idle
+      if (currentState === 'waiting'){
+        play('idle');
+      }
+      hideBubble();
+      idleTimer = setTimeout(function(){
+        play('waiting');
+        showBubble();
+      }, IDLE_DELAY);
+    }
+
+    // Активность пользователя
+    ['mousemove','scroll','keydown','touchstart','click'].forEach(function(ev){
+      document.addEventListener(ev, function(e){
+        // Игнорируем клики по самому маскоту — он сам сбросит
+        if (e.target && e.target.closest && e.target.closest('#mascot')) return;
+        resetIdleClock();
+      }, { passive: true });
+    });
+
+    // Hover — приветствие
+    mascot.addEventListener('mouseenter', function(){
+      if (currentState === 'idle' || currentState === 'waiting'){
+        hideBubble();
+        play('waving');
+      }
+    });
+
+    // Клик — прыжок + модалка
+    mascot.addEventListener('click', function(e){
+      e.stopPropagation();
+      play('jumping');
+      hideBubble();
+      setTimeout(function(){
+        if (window.__openAskModal) window.__openAskModal();
+      }, 250);
+    });
+
+    // Старт
+    play('idle');
+    resetIdleClock();
+    scheduleSpontaneous();
+
+    // Прелоад первых кадров чтобы первый показ был мгновенным
+    ['waiting/00','waving/00','jumping/00'].forEach(function(p){
+      var pre = new Image();
+      pre.src = 'mascot/' + p + '.webp';
+    });
+  })();
+
+  /* ───── Модалка «Задать вопрос» ───── */
+  (function setupAskModal(){
+    var modal = document.getElementById('askModal');
+    if (!modal) return;
+    var closeBtn = modal.querySelector('.ask-close');
+    var formStep = modal.querySelector('[data-step="form"]');
+    var thanksStep = modal.querySelector('[data-step="thanks"]');
+    var form = modal.querySelector('#askForm');
+    var submit = modal.querySelector('.ask-submit');
+    var thanksName = modal.querySelector('.ask-thanks-name');
+    var lastFocus = null;
+
+    function open(){
+      lastFocus = document.activeElement;
+      formStep.hidden = false;
+      thanksStep.hidden = true;
+      form.reset();
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('ask-open');
+      setTimeout(function(){
+        var first = form.querySelector('input[name="name"]');
+        if (first) first.focus();
+      }, 200);
+    }
+    function close(){
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('ask-open');
+      if (lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch(_){}
+    }
+    function showThanks(name){
+      thanksName.textContent = name || 'друг';
+      formStep.hidden = true;
+      thanksStep.hidden = false;
+    }
+
+    window.__openAskModal = open;
+
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', function(e){
+      if (e.target === modal) close();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+    });
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if (submit.disabled) return;
+
+      var hp = form.querySelector('input[name="company"]');
+      if (hp && hp.value) { showThanks(form.name.value); return; }
+
+      var name = form.name.value.trim();
+      var telegram = form.telegram.value.trim();
+      var question = form.question.value.trim();
+      var ok = true;
+      [['name', name, 1], ['telegram', telegram, 2], ['question', question, 3]].forEach(function(p){
+        var input = form.querySelector('[name="'+p[0]+'"]');
+        if (!p[1] || (p[0] === 'question' && p[1].length < 3)){
+          input.classList.add('is-error');
+          ok = false;
+        } else {
+          input.classList.remove('is-error');
+        }
+      });
+      if (!ok) return;
+
+      // Telegram-бот тот же — переиспользуем токен
+      var TG_BOT_TOKEN = '8710283046:AAEX7RcTj0AfQNRm-yssusvvqyHqAPSHQns';
+      var TG_CHAT_ID = '329280773';
+
+      function tgEscape(s){
+        return String(s || '').replace(/[<>&]/g, function(c){
+          return { '<':'&lt;', '>':'&gt;', '&':'&amp;' }[c];
+        });
+      }
+
+      var tgText =
+        '💬 <b>Вопрос с лендинга</b>\n\n' +
+        '<b>Имя:</b> ' + tgEscape(name) + '\n' +
+        '<b>Telegram:</b> ' + tgEscape(telegram) + '\n' +
+        '\n<b>Вопрос:</b>\n' + tgEscape(question) + '\n\n' +
+        '<i>с лендинга «ИИ. Новая реальность» · маскот-чат</i>';
+
+      var formData = new FormData();
+      formData.append('chat_id', TG_CHAT_ID);
+      formData.append('parse_mode', 'HTML');
+      formData.append('text', tgText);
+      formData.append('disable_web_page_preview', 'true');
+
+      submit.disabled = true;
+      submit.classList.add('is-loading');
+
+      fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
+        method: 'POST', body: formData
+      }).then(function(r){ return r.json(); })
+        .then(function(data){
+          if (!data || !data.ok) console.warn('[ASK] Telegram error:', data);
+        })
+        .catch(function(err){ console.warn('[ASK] fetch error:', err); })
+        .finally(function(){
+          submit.disabled = false;
+          submit.classList.remove('is-loading');
+          showThanks(name);
+        });
+
+      setTimeout(function(){
+        if (submit.classList.contains('is-loading')){
+          submit.disabled = false;
+          submit.classList.remove('is-loading');
+          showThanks(name);
+        }
+      }, 4000);
+    });
+
+    form.querySelectorAll('input, textarea').forEach(function(input){
+      input.addEventListener('input', function(){ input.classList.remove('is-error'); });
+    });
+  })();
 
   /* ───── Карусель отзывов: drag/swipe + клик → лайтбокс ───── */
   (function setupTestimonialsCarousel(){
