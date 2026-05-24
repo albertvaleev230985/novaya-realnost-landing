@@ -5086,6 +5086,17 @@ body.signup-open{ overflow:hidden; }
   image-rendering:-webkit-optimize-contrast;
   image-rendering:crisp-edges;
   pointer-events:none;
+  /* «Дышит» поверх покадровой анимации — кадры idle/waiting почти
+     идентичны визуально, без этой CSS-микроанимации маскот кажется
+     статичным даже при работающем frame-swap */
+  animation:mascot-breathe 2.6s ease-in-out infinite;
+  transform-origin:50% 100%;
+}
+.mascot:hover img{ animation:none; }
+@keyframes mascot-breathe{
+  0%, 100% { transform:translateY(0) scale(1); }
+  45%      { transform:translateY(-3px) scale(1.015); }
+  55%      { transform:translateY(-3px) scale(1.015); }
 }
 
 /* Bubble «Чем могу помочь?» */
@@ -8011,7 +8022,7 @@ if ('scrollRestoration' in history) {
     var idleTimer = null;
     var spontaneousTimer = null;
     var IDLE_DELAY = 9000;   // 9 сек простоя → задумывается
-    var SPONTANEOUS_MIN = 18000, SPONTANEOUS_MAX = 32000; // случайные «оживляющие» движения
+    var SPONTANEOUS_MIN = 6000, SPONTANEOUS_MAX = 13000; // случайные «оживляющие» движения — часто, чтобы маскот «жил»
 
     function pad(n){ return n < 10 ? '0' + n : '' + n; }
 
