@@ -5086,17 +5086,16 @@ body.signup-open{ overflow:hidden; }
   image-rendering:-webkit-optimize-contrast;
   image-rendering:crisp-edges;
   pointer-events:none;
-  /* «Дышит» поверх покадровой анимации — кадры idle/waiting почти
-     идентичны визуально, без этой CSS-микроанимации маскот кажется
-     статичным даже при работающем frame-swap */
-  animation:mascot-breathe 2.6s ease-in-out infinite;
+  /* «Дышит» поверх покадровой анимации — мягкое и медленное
+     движение, имитирующее вдох-выдох. Помогает когда кадры
+     idle почти идентичны (различия микро) */
+  animation:mascot-breathe 3.6s ease-in-out infinite;
   transform-origin:50% 100%;
 }
 .mascot:hover img{ animation:none; }
 @keyframes mascot-breathe{
-  0%, 100% { transform:translateY(0) scale(1); }
-  45%      { transform:translateY(-3px) scale(1.015); }
-  55%      { transform:translateY(-3px) scale(1.015); }
+  0%, 100% { transform:translateY(0)   scale(1); }
+  50%      { transform:translateY(-2px) scale(1.012); }
 }
 
 /* Bubble «Чем могу помочь?» */
@@ -8008,12 +8007,19 @@ if ('scrollRestoration' in history) {
     var bubble = document.getElementById('mascotBubble');
     if (!mascot || !img) return;
 
-    // Состояния и кадры
+    // Состояния и кадры — fps подобраны «по-человечески»:
+    // idle/waiting медленные (микро-движения), waving/jumping живые но не быстрые
     var FRAMES = {
-      idle:    { count: 6, fps: 6,  loop: true  },
-      waiting: { count: 6, fps: 4,  loop: true  },
-      waving:  { count: 4, fps: 8,  loop: false, next: 'idle' },
-      jumping: { count: 5, fps: 10, loop: false, next: 'idle' }
+      // Кадры idle различаются микро-движениями (моргание, хвост) — играем
+      // редко, как реальное моргание раз в ~3 сек
+      idle:    { count: 6, fps: 2,   loop: true  },
+      // Садится один раз и ОСТАЁТСЯ сидеть (loop:false, holdLast)
+      // — больше не «вскакивает» обратно
+      waiting: { count: 6, fps: 1.8, loop: false, holdLast: true },
+      // Машет плавно
+      waving:  { count: 4, fps: 5,   loop: false, next: 'idle' },
+      // Прыгает живо но не как метеор
+      jumping: { count: 5, fps: 7,   loop: false, next: 'idle' }
     };
 
     var currentState = 'idle';
@@ -8021,8 +8027,8 @@ if ('scrollRestoration' in history) {
     var frameTimer = null;
     var idleTimer = null;
     var spontaneousTimer = null;
-    var IDLE_DELAY = 9000;   // 9 сек простоя → задумывается
-    var SPONTANEOUS_MIN = 6000, SPONTANEOUS_MAX = 13000; // случайные «оживляющие» движения — часто, чтобы маскот «жил»
+    var IDLE_DELAY = 12000;  // 12 сек простоя → задумывается (больше воздуха)
+    var SPONTANEOUS_MIN = 9000, SPONTANEOUS_MAX = 18000; // оживляется реже — спокойнее
 
     function pad(n){ return n < 10 ? '0' + n : '' + n; }
 
@@ -8040,6 +8046,11 @@ if ('scrollRestoration' in history) {
       if (currentFrame >= cfg.count){
         if (cfg.loop) {
           currentFrame = 0;
+        } else if (cfg.holdLast) {
+          // Остаёмся на последнем кадре — анимация замирает в финальной позе
+          // (для waiting: сел и сидит). Из этого состояния выйдем только
+          // при пользовательской активности (resetIdleClock)
+          return;
         } else {
           play(cfg.next || 'idle');
           return;
@@ -8081,7 +8092,7 @@ if ('scrollRestoration' in history) {
       }, IDLE_DELAY);
     }
 
-    // Активность пользователя
+    // Активность пользователя — сбрасывает idle-таймер
     ['mousemove','scroll','keydown','touchstart','click'].forEach(function(ev){
       document.addEventListener(ev, function(e){
         // Игнорируем клики по самому маскоту — он сам сбросит
@@ -8089,6 +8100,28 @@ if ('scrollRestoration' in history) {
         resetIdleClock();
       }, { passive: true });
     });
+
+    // Реакция на «активный скролл» — если юзер заметно скроллит,
+    // маскот раз в N секунд приветствует движением (с throttle)
+    var lastScrollReact = 0;
+    var lastScrollY = window.scrollY;
+    var scrollDelta = 0;
+    window.addEventListener('scroll', function(){
+      var dy = Math.abs(window.scrollY - lastScrollY);
+      lastScrollY = window.scrollY;
+      scrollDelta += dy;
+      var now = Date.now();
+      // Реагируем только если накопили заметный скролл (>1200px)
+      // и прошло минимум 8 сек с последней реакции
+      if (scrollDelta > 1200 && now - lastScrollReact > 8000){
+        scrollDelta = 0;
+        lastScrollReact = now;
+        if (currentState === 'idle' || currentState === 'waiting'){
+          hideBubble();
+          play('waving');
+        }
+      }
+    }, { passive: true });
 
     // Hover — приветствие
     mascot.addEventListener('mouseenter', function(){
