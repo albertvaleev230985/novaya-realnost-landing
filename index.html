@@ -4436,12 +4436,21 @@ body.t-lightbox-open{ overflow:hidden; }
 }
 .t-lightbox.is-open .t-lightbox-stage{ transform:scale(1); }
 
-.t-lightbox-stage video{
+.t-lightbox-stage video,
+.t-lightbox-stage .t-lightbox-img{
   width:100%; height:100%;
   object-fit:contain;
   background:#000;
   display:block;
 }
+.t-lightbox-stage .t-lightbox-img{ display:none; }
+.t-lightbox.is-image .t-lightbox-stage video{ display:none; }
+.t-lightbox.is-image .t-lightbox-stage .t-lightbox-img{ display:block; }
+/* Для картинок-отзывов скрываем градиент-подложку под метой — текст и так читается */
+.t-lightbox.is-image .t-lightbox-meta{ background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.9) 100%); }
+
+/* Marquee колонок оценок — пауза при лайтбоксе */
+.ratings-grid.is-paused .r-col{ animation-play-state:paused; }
 .t-lightbox-meta{
   position:absolute; left:0; right:0; bottom:0;
   padding:60px 22px 22px;
@@ -5714,94 +5723,94 @@ body.t-lightbox-open{ overflow:hidden; }
   <div class="wrap">
     <div class="ratings-head reveal">
       <div class="eyebrow"><span class="bar"></span>Чат потока<span class="bar"></span></div>
-      <h2>Оценки. Тексты. <span class="it">И благодарности прямо в эфире.</span></h2>
-      <p>Так выглядит чат потока после каждого занятия. <span style="color:var(--coral)">10 из 10 — это минимум</span>; чаще пишут на все 100.</p>
+      <h2>10 из 10 — это минимум.<br><span class="it">Чаще ставят на все <span class="hund">100</span>.</span></h2>
+      <p>Анонимные оценки в чате потока сразу после занятия. А на финале — благодарность прямо в эфире. Нажми на любую карточку, чтобы посмотреть.</p>
     </div>
 
     <div class="ratings-grid">
 
       <!-- Колонка 1 -->
       <div class="r-col r-col-1">
-        <article class="r-card">
+        <article class="r-card" data-r-type="video" data-r-src="ratings/rec-01.mp4" data-r-poster="ratings/rec-01.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-01.mp4" poster="ratings/rec-01.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-01.mp4" poster="ratings/rec-01.jpg" muted loop playsinline preload="none"></video>
         </article>
-        <article class="r-card">
+        <article class="r-card" data-r-type="image" data-r-src="ratings/text-01.jpg" data-r-tag="Отзыв в чате потока">
           <span class="r-tag">отзыв в чате</span>
           <img class="r-shot" src="ratings/text-01.jpg" alt="Отзыв ученика в чате потока" loading="lazy">
         </article>
-        <article class="r-card">
+        <article class="r-card" data-r-type="video" data-r-src="ratings/rec-02.mp4" data-r-poster="ratings/rec-02.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-02.mp4" poster="ratings/rec-02.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-02.mp4" poster="ratings/rec-02.jpg" muted loop playsinline preload="none"></video>
         </article>
         <!-- дубликаты для бесшовной marquee -->
-        <article class="r-card" aria-hidden="true">
+        <article class="r-card" aria-hidden="true" data-r-type="video" data-r-src="ratings/rec-01.mp4" data-r-poster="ratings/rec-01.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-01.mp4" poster="ratings/rec-01.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-01.mp4" poster="ratings/rec-01.jpg" muted loop playsinline preload="none"></video>
         </article>
-        <article class="r-card" aria-hidden="true">
+        <article class="r-card" aria-hidden="true" data-r-type="image" data-r-src="ratings/text-01.jpg" data-r-tag="Отзыв в чате потока">
           <span class="r-tag">отзыв в чате</span>
           <img class="r-shot" src="ratings/text-01.jpg" alt="" loading="lazy">
         </article>
-        <article class="r-card" aria-hidden="true">
+        <article class="r-card" aria-hidden="true" data-r-type="video" data-r-src="ratings/rec-02.mp4" data-r-poster="ratings/rec-02.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-02.mp4" poster="ratings/rec-02.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-02.mp4" poster="ratings/rec-02.jpg" muted loop playsinline preload="none"></video>
         </article>
       </div>
 
       <!-- Колонка 2 — с эфирной благодарностью с 8 занятия -->
       <div class="r-col r-col-2">
-        <article class="r-card">
+        <article class="r-card" data-r-type="video" data-r-src="ratings/rec-03.mp4" data-r-poster="ratings/rec-03.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-03.mp4" poster="ratings/rec-03.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-03.mp4" poster="ratings/rec-03.jpg" muted loop playsinline preload="none"></video>
         </article>
-        <article class="r-card">
+        <article class="r-card" data-r-type="video" data-r-src="ratings/live-08.mp4" data-r-poster="ratings/live-08.jpg" data-r-tag="Эфир · занятие 8" data-r-role="благодарность в прямом эфире">
           <span class="r-tag is-live">эфир · занятие 8</span>
-          <video src="ratings/live-08.mp4" poster="ratings/live-08.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/live-08.mp4" poster="ratings/live-08.jpg" muted loop playsinline preload="none"></video>
         </article>
-        <article class="r-card">
+        <article class="r-card" data-r-type="video" data-r-src="ratings/rec-04.mp4" data-r-poster="ratings/rec-04.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-04.mp4" poster="ratings/rec-04.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-04.mp4" poster="ratings/rec-04.jpg" muted loop playsinline preload="none"></video>
         </article>
-        <article class="r-card" aria-hidden="true">
+        <article class="r-card" aria-hidden="true" data-r-type="video" data-r-src="ratings/rec-03.mp4" data-r-poster="ratings/rec-03.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-03.mp4" poster="ratings/rec-03.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-03.mp4" poster="ratings/rec-03.jpg" muted loop playsinline preload="none"></video>
         </article>
-        <article class="r-card" aria-hidden="true">
+        <article class="r-card" aria-hidden="true" data-r-type="video" data-r-src="ratings/live-08.mp4" data-r-poster="ratings/live-08.jpg" data-r-tag="Эфир · занятие 8" data-r-role="благодарность в прямом эфире">
           <span class="r-tag is-live">эфир · занятие 8</span>
-          <video src="ratings/live-08.mp4" poster="ratings/live-08.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/live-08.mp4" poster="ratings/live-08.jpg" muted loop playsinline preload="none"></video>
         </article>
-        <article class="r-card" aria-hidden="true">
+        <article class="r-card" aria-hidden="true" data-r-type="video" data-r-src="ratings/rec-04.mp4" data-r-poster="ratings/rec-04.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-04.mp4" poster="ratings/rec-04.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-04.mp4" poster="ratings/rec-04.jpg" muted loop playsinline preload="none"></video>
         </article>
       </div>
 
       <!-- Колонка 3 -->
       <div class="r-col r-col-3">
-        <article class="r-card">
+        <article class="r-card" data-r-type="video" data-r-src="ratings/rec-05.mp4" data-r-poster="ratings/rec-05.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-05.mp4" poster="ratings/rec-05.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-05.mp4" poster="ratings/rec-05.jpg" muted loop playsinline preload="none"></video>
         </article>
-        <article class="r-card">
+        <article class="r-card" data-r-type="image" data-r-src="ratings/text-02.jpg" data-r-tag="Отзыв в чате потока">
           <span class="r-tag">отзыв в чате</span>
           <img class="r-shot" src="ratings/text-02.jpg" alt="Отзыв ученика в чате потока" loading="lazy">
         </article>
-        <article class="r-card">
+        <article class="r-card" data-r-type="video" data-r-src="ratings/rec-06.mp4" data-r-poster="ratings/rec-06.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-06.mp4" poster="ratings/rec-06.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-06.mp4" poster="ratings/rec-06.jpg" muted loop playsinline preload="none"></video>
         </article>
-        <article class="r-card" aria-hidden="true">
+        <article class="r-card" aria-hidden="true" data-r-type="video" data-r-src="ratings/rec-05.mp4" data-r-poster="ratings/rec-05.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-05.mp4" poster="ratings/rec-05.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-05.mp4" poster="ratings/rec-05.jpg" muted loop playsinline preload="none"></video>
         </article>
-        <article class="r-card" aria-hidden="true">
+        <article class="r-card" aria-hidden="true" data-r-type="image" data-r-src="ratings/text-02.jpg" data-r-tag="Отзыв в чате потока">
           <span class="r-tag">отзыв в чате</span>
           <img class="r-shot" src="ratings/text-02.jpg" alt="" loading="lazy">
         </article>
-        <article class="r-card" aria-hidden="true">
+        <article class="r-card" aria-hidden="true" data-r-type="video" data-r-src="ratings/rec-06.mp4" data-r-poster="ratings/rec-06.jpg" data-r-tag="Оценки в чате потока">
           <span class="r-tag">оценки</span>
-          <video src="ratings/rec-06.mp4" poster="ratings/rec-06.jpg" muted autoplay loop playsinline preload="metadata"></video>
+          <video src="ratings/rec-06.mp4" poster="ratings/rec-06.jpg" muted loop playsinline preload="none"></video>
         </article>
       </div>
 
@@ -6340,13 +6349,14 @@ body.t-lightbox-open{ overflow:hidden; }
   </div>
 </section>
 
-<!-- Лайтбокс отзыва (один на всю страницу) -->
-<div class="t-lightbox" id="tLightbox" aria-hidden="true" role="dialog" aria-label="Видео-отзыв">
+<!-- Лайтбокс (один на всю страницу — для отзывов и оценок) -->
+<div class="t-lightbox" id="tLightbox" aria-hidden="true" role="dialog" aria-label="Превью">
   <button class="t-close" type="button" aria-label="Закрыть">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
   </button>
   <div class="t-lightbox-stage">
     <video controls playsinline preload="none"></video>
+    <img class="t-lightbox-img" alt="">
     <div class="t-lightbox-meta">
       <div class="name"></div>
       <div class="role"></div>
@@ -6795,7 +6805,7 @@ window.addEventListener('pageshow', function(){
       try { track.releasePointerCapture(e.pointerId); } catch(_){}
       // Простое касание без drag — открываем лайтбокс на нажатой карточке
       if (!wasMoved && card){
-        openLightbox(card);
+        openTestimonialLightbox(card);
       }
     }
     track.addEventListener('pointerup', endDrag);
@@ -6809,42 +6819,78 @@ window.addEventListener('pageshow', function(){
       try { track.releasePointerCapture(e.pointerId); } catch(_){}
     });
 
-    /* Лайтбокс */
+    /* Лайтбокс (общий — для отзывов и оценок) */
     var lb = document.getElementById('tLightbox');
     if (!lb) return;
     var lbVideo = lb.querySelector('video');
+    var lbImg = lb.querySelector('.t-lightbox-img');
     var lbName = lb.querySelector('.t-lightbox-meta .name');
     var lbRole = lb.querySelector('.t-lightbox-meta .role');
     var lbClose = lb.querySelector('.t-close');
 
-    function pauseCardVideos(){
-      document.querySelectorAll('.t-card video').forEach(function(v){ v.pause(); });
+    function pauseAllAutoVideos(){
+      document.querySelectorAll('.t-card video, .r-card video').forEach(function(v){ v.pause(); });
     }
-    function playCardVideos(){
+    function resumeAutoVideos(){
+      // Восстанавливаем .t-card видео (отзывы) — они должны крутиться всегда
       document.querySelectorAll('.t-card video').forEach(function(v){
-        var p = v.play();
-        if (p && p.catch) p.catch(function(){});
+        var p = v.play(); if (p && p.catch) p.catch(function(){});
       });
+      // .r-card — только те что видны в viewport (см. observer ниже)
+      if (window.__rRefreshAutoplay) window.__rRefreshAutoplay();
+    }
+    function setRatingsPaused(p){
+      var grid = document.querySelector('.ratings-grid');
+      if (grid) grid.classList.toggle('is-paused', p);
     }
 
-    function openLightbox(card){
-      var srcVideo = card.querySelector('video');
-      var src = srcVideo.currentSrc || srcVideo.src || srcVideo.getAttribute('src');
-      lbVideo.src = src;
-      try { lbVideo.currentTime = 0; } catch(_){}
-      lbName.textContent = card.querySelector('.name').textContent;
-      lbRole.textContent = card.querySelector('.role').textContent;
+    // openLightbox теперь принимает параметры (вызывается и для .t-card, и для .r-card)
+    function openLightbox(opts){
+      var type = opts.type || 'video';
+      var src = opts.src;
+      if (!src) return;
+      if (type === 'image'){
+        lb.classList.add('is-image');
+        lbImg.src = src;
+        try { lbVideo.pause(); lbVideo.removeAttribute('src'); lbVideo.load(); } catch(_){}
+      } else {
+        lb.classList.remove('is-image');
+        lbVideo.src = src;
+        try { lbVideo.currentTime = 0; } catch(_){}
+      }
+      lbName.textContent = opts.name || '';
+      lbRole.textContent = opts.role || '';
+      lbRole.style.display = opts.role ? '' : 'none';
       lb.classList.add('is-open');
       lb.setAttribute('aria-hidden', 'false');
       document.body.classList.add('t-lightbox-open');
       lbOpen = true;
-      pauseCardVideos();
-      lbVideo.muted = false;
-      var p = lbVideo.play();
-      if (p && p.catch) p.catch(function(){ /* возможен жест требуется */ });
+      pauseAllAutoVideos();
+      setRatingsPaused(true);
+      if (type === 'video'){
+        lbVideo.muted = false;
+        var p = lbVideo.play();
+        if (p && p.catch) p.catch(function(){});
+      }
     }
+    // Открыть отзыв из .t-card (старый API)
+    function openTestimonialLightbox(card){
+      var srcVideo = card.querySelector('video');
+      openLightbox({
+        type: 'video',
+        src: srcVideo.currentSrc || srcVideo.src || srcVideo.getAttribute('src'),
+        name: card.querySelector('.name').textContent,
+        role: card.querySelector('.role').textContent
+      });
+    }
+    // Открытие из .t-card на pointerup (endDrag) делегирует сюда
+    window.__openTestimonialLightbox = openTestimonialLightbox;
+    // Доступно для блока .r-card ниже
+    window.__openMediaLightbox = openLightbox;
+
     function closeLightbox(){
       lb.classList.remove('is-open');
+      lb.classList.remove('is-image');
       lb.setAttribute('aria-hidden', 'true');
       document.body.classList.remove('t-lightbox-open');
       lbOpen = false;
@@ -6853,7 +6899,9 @@ window.addEventListener('pageshow', function(){
         lbVideo.removeAttribute('src');
         lbVideo.load();
       } catch(_){}
-      playCardVideos();
+      lbImg.src = '';
+      setRatingsPaused(false);
+      resumeAutoVideos();
     }
 
     lbClose.addEventListener('click', closeLightbox);
@@ -6864,8 +6912,69 @@ window.addEventListener('pageshow', function(){
       if (e.key === 'Escape' && lbOpen) closeLightbox();
     });
 
-    // Открытие лайтбокса полностью на pointerup внутри endDrag —
-    // отдельный click-listener не нужен (вызывал бы двойное открытие).
+    // Подменим openLightbox внутри endDrag-области — оно вызывает локальный
+    // openLightbox(card). Переопределим через window:
+    // (endDrag вызывает openLightbox(card); этот openLightbox — ниже определённая
+    //  функция, которая для .t-card работает через openTestimonialLightbox)
+  })();
+
+  /* ───── Оценки: кликабельность карточек + умная загрузка видео ───── */
+  (function setupRatingsCards(){
+    var grid = document.querySelector('.ratings-grid');
+    if (!grid) return;
+    var cards = grid.querySelectorAll('.r-card');
+    var isMobile = window.matchMedia('(max-width: 760px)').matches;
+
+    // На мобайле — ВООБЩЕ не автоплеим, только постеры. Видео грузится в лайтбоксе.
+    if (isMobile){
+      cards.forEach(function(c){
+        var v = c.querySelector('video');
+        if (v) {
+          v.preload = 'none';
+          v.removeAttribute('autoplay');
+          v.pause();
+        }
+      });
+    } else {
+      // На десктопе — IntersectionObserver: играет только то, что в viewport
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){
+          var v = e.target.querySelector('video');
+          if (!v) return;
+          if (e.isIntersecting){
+            var p = v.play(); if (p && p.catch) p.catch(function(){});
+          } else {
+            v.pause();
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '120px 0px' });
+      cards.forEach(function(c){ io.observe(c); });
+
+      // Хелпер для resumeAutoVideos после закрытия лайтбокса
+      window.__rRefreshAutoplay = function(){
+        cards.forEach(function(c){
+          var v = c.querySelector('video');
+          if (!v) return;
+          var r = c.getBoundingClientRect();
+          var visible = r.bottom > 0 && r.top < window.innerHeight;
+          if (visible){ var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+        });
+      };
+    }
+
+    // Клик по карточке → открыть в лайтбоксе
+    cards.forEach(function(card){
+      card.addEventListener('click', function(){
+        var type = card.getAttribute('data-r-type') || 'video';
+        var src = card.getAttribute('data-r-src');
+        var tag = card.getAttribute('data-r-tag') || '';
+        var role = card.getAttribute('data-r-role') || '';
+        if (window.__openMediaLightbox){
+          window.__openMediaLightbox({ type: type, src: src, name: tag, role: role });
+        }
+      });
+      card.style.cursor = 'pointer';
+    });
   })();
 
 })();
