@@ -7279,40 +7279,57 @@ body.ask-open{ overflow:hidden; }
 
 <!-- ═══════════════ ПОДВАЛ / ЮР. ИНФОРМАЦИЯ ═══════════════ -->
 <style>
-.nv-footer{background:#06091A;color:rgba(255,255,255,.62);padding:clamp(40px,7vw,72px) clamp(20px,5vw,40px) 40px;font-family:'Onest',-apple-system,system-ui,sans-serif;border-top:1px solid rgba(255,255,255,.08)}
-.nv-footer .in{max-width:1100px;margin:0 auto}
-.nv-footer .top{display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:flex-start}
-.nv-footer .brand{font-size:18px;font-weight:800;color:#fff;letter-spacing:-.01em}
+.nv-footer{background:#06091A;color:rgba(255,255,255,.62);padding:clamp(56px,8vw,88px) clamp(20px,5vw,40px) 32px;font-family:'Onest',-apple-system,system-ui,sans-serif;border-top:1px solid rgba(255,255,255,.08)}
+.nv-footer .in{max-width:1140px;margin:0 auto}
+.nv-footer .grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr;gap:40px}
+@media(max-width:860px){.nv-footer .grid{grid-template-columns:1fr 1fr;gap:32px}}
+@media(max-width:520px){.nv-footer .grid{grid-template-columns:1fr;gap:28px}}
+.nv-footer .brand{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.01em}
 .nv-footer .brand b{color:#FF6F61}
-.nv-footer .tag{font-size:13px;margin-top:6px;color:rgba(255,255,255,.5);max-width:340px;line-height:1.5}
-.nv-footer .links{display:flex;flex-direction:column;gap:8px}
-.nv-footer .links a{color:rgba(255,255,255,.72);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
-.nv-footer .links a:hover{color:#FF6F61}
-.nv-footer .req{margin-top:34px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;line-height:1.7;color:rgba(255,255,255,.5)}
-.nv-footer .req b{color:rgba(255,255,255,.75);font-weight:600}
-.nv-footer .req a{color:rgba(255,255,255,.6);text-decoration:underline}
-.nv-footer .copy{margin-top:18px;font-size:12px;color:rgba(255,255,255,.38)}
-@media(max-width:560px){.nv-footer .top{flex-direction:column;gap:24px}}
+.nv-footer .tag{font-size:13px;margin-top:10px;color:rgba(255,255,255,.5);max-width:300px;line-height:1.55}
+.nv-footer .lic{margin-top:16px;font-size:12px;line-height:1.5;color:rgba(255,255,255,.45)}
+.nv-footer .lic b{color:rgba(255,255,255,.7);font-weight:600;display:block;margin-bottom:2px}
+.nv-footer h4{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-bottom:16px}
+.nv-footer .col a,.nv-footer .col .row{display:block;color:rgba(255,255,255,.74);text-decoration:none;font-size:14.5px;font-weight:500;margin-bottom:10px;transition:color .2s}
+.nv-footer .col a:hover{color:#FF6F61}
+.nv-footer .col .row{color:rgba(255,255,255,.55);font-weight:400}
+.nv-footer .legal{margin-top:40px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:12px;line-height:1.7;color:rgba(255,255,255,.4);font-variant-numeric:tabular-nums}
+.nv-footer .legal b{color:rgba(255,255,255,.62);font-weight:600}
+.nv-footer .legal .copy{white-space:nowrap}
 </style>
 <footer class="nv-footer">
   <div class="in">
-    <div class="top">
+    <div class="grid">
       <div>
         <div class="brand">neovida<b>.ai</b></div>
         <div class="tag">Онлайн-курс «ИИ. Новая реальность». Образовательная платформа компании AI-трансформации.</div>
+        <div class="lic"><b>Образовательная лицензия</b>№ Л035-01198-02/04299563 от 04.02.2026</div>
       </div>
-      <div class="links">
+      <div class="col">
+        <h4>Курс</h4>
+        <a href="#program">Программа</a>
+        <a href="#after">Результат</a>
+        <a href="#host">Ведущий</a>
+        <a href="#cta">Запись</a>
+      </div>
+      <div class="col">
+        <h4>Документы</h4>
         <a href="privacy.html">Политика конфиденциальности</a>
+        <a href="privacy.html">Согласие на обработку ПД</a>
+        <a href="oferta.html">Договор-оферта</a>
+      </div>
+      <div class="col">
+        <h4>Контакты</h4>
+        <a href="tel:+79177712181">+7 917 771-21-81</a>
         <a href="mailto:neovida.ai@gmail.com">neovida.ai@gmail.com</a>
         <a href="https://t.me/neovidaAi" target="_blank" rel="noopener">Telegram</a>
+        <span class="row">Ответим в течение дня</span>
       </div>
     </div>
-    <div class="req">
-      <b>ООО «НЕОВИДА»</b> · ИНН 0274399130 · ОГРН 1250200038318 · КПП 027401001<br>
-      Юридический адрес: 450047, Республика Башкортостан, г. Уфа, ул. Менделеева, д. 137/3, помещение 236<br>
-      Данные обрабатываются и хранятся на серверах в РФ в соответствии с 152-ФЗ.
+    <div class="legal">
+      <span><b>ООО «НЕОВИДА»</b> · ИНН 0274399130 · КПП 027401001 · ОГРН 1250200038318 · 450047, г. Уфа, ул. Менделеева, д. 137/3, пом. 236 · данные на серверах в РФ (152-ФЗ)</span>
+      <span class="copy">© 2026 neovida</span>
     </div>
-    <div class="copy">© 2026 ООО «НЕОВИДА». Все права защищены.</div>
   </div>
 </footer>
 
