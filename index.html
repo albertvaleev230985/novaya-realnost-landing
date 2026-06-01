@@ -7277,6 +7277,45 @@ body.ask-open{ overflow:hidden; }
   </div>
 </section>
 
+<!-- ═══════════════ ПОДВАЛ / ЮР. ИНФОРМАЦИЯ ═══════════════ -->
+<style>
+.nv-footer{background:#06091A;color:rgba(255,255,255,.62);padding:clamp(40px,7vw,72px) clamp(20px,5vw,40px) 40px;font-family:'Onest',-apple-system,system-ui,sans-serif;border-top:1px solid rgba(255,255,255,.08)}
+.nv-footer .in{max-width:1100px;margin:0 auto}
+.nv-footer .top{display:flex;flex-wrap:wrap;gap:32px;justify-content:space-between;align-items:flex-start}
+.nv-footer .brand{font-size:18px;font-weight:800;color:#fff;letter-spacing:-.01em}
+.nv-footer .brand b{color:#FF6F61}
+.nv-footer .tag{font-size:13px;margin-top:6px;color:rgba(255,255,255,.5);max-width:340px;line-height:1.5}
+.nv-footer .links{display:flex;flex-direction:column;gap:8px}
+.nv-footer .links a{color:rgba(255,255,255,.72);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.nv-footer .links a:hover{color:#FF6F61}
+.nv-footer .req{margin-top:34px;padding-top:24px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;line-height:1.7;color:rgba(255,255,255,.5)}
+.nv-footer .req b{color:rgba(255,255,255,.75);font-weight:600}
+.nv-footer .req a{color:rgba(255,255,255,.6);text-decoration:underline}
+.nv-footer .copy{margin-top:18px;font-size:12px;color:rgba(255,255,255,.38)}
+@media(max-width:560px){.nv-footer .top{flex-direction:column;gap:24px}}
+</style>
+<footer class="nv-footer">
+  <div class="in">
+    <div class="top">
+      <div>
+        <div class="brand">neovida<b>.ai</b></div>
+        <div class="tag">Онлайн-курс «ИИ. Новая реальность». Образовательная платформа компании AI-трансформации.</div>
+      </div>
+      <div class="links">
+        <a href="privacy.html">Политика конфиденциальности</a>
+        <a href="mailto:neovida.ai@gmail.com">neovida.ai@gmail.com</a>
+        <a href="https://t.me/neovidaAi" target="_blank" rel="noopener">Telegram</a>
+      </div>
+    </div>
+    <div class="req">
+      <b>ООО «НЕОВИДА»</b> · ИНН 0274399130 · ОГРН 1250200038318 · КПП 027401001<br>
+      Юридический адрес: 450047, Республика Башкортостан, г. Уфа, ул. Менделеева, д. 137/3, помещение 236<br>
+      Данные обрабатываются и хранятся на серверах в РФ в соответствии с 152-ФЗ.
+    </div>
+    <div class="copy">© 2026 ООО «НЕОВИДА». Все права защищены.</div>
+  </div>
+</footer>
+
 <!-- ═══════════════ МАСКОТ — sticky widget ═══════════════ -->
 <div class="mascot" id="mascot" role="button" aria-label="Задать вопрос">
   <div class="mascot-bubble" id="mascotBubble">Чем могу <span class="accent">помочь?</span></div>
@@ -7320,7 +7359,7 @@ body.ask-open{ overflow:hidden; }
         <span class="ask-submit-label">Отправить вопрос</span>
         <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
       </button>
-      <p class="ask-disclaimer">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
+      <p class="ask-disclaimer">Нажимая кнопку, вы соглашаетесь на обработку персональных данных в&nbsp;соответствии с&nbsp;<a href="privacy.html" target="_blank" rel="noopener" style="color:var(--coral);text-decoration:underline">Политикой конфиденциальности</a>.</p>
     </form>
   </div>
 
@@ -7371,7 +7410,7 @@ body.ask-open{ overflow:hidden; }
         <span class="signup-submit-label">Записаться</span>
         <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
       </button>
-      <p class="signup-disclaimer">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
+      <p class="signup-disclaimer">Нажимая кнопку, вы соглашаетесь на обработку персональных данных в&nbsp;соответствии с&nbsp;<a href="privacy.html" target="_blank" rel="noopener" style="color:var(--coral);text-decoration:underline">Политикой конфиденциальности</a>.</p>
     </form>
   </div>
 
@@ -8545,6 +8584,34 @@ if ('scrollRestoration' in history) {
     });
   })();
 
+})();
+</script>
+
+<!-- ═══════════════ COOKIE-БАННЕР ═══════════════ -->
+<style>
+.nv-cookie{position:fixed;left:16px;right:16px;bottom:16px;z-index:9999;max-width:560px;margin:0 auto;background:rgba(10,13,30,.96);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px;box-shadow:0 12px 40px rgba(0,0,0,.45);font-family:'Onest',-apple-system,system-ui,sans-serif;transform:translateY(140%);transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.nv-cookie.show{transform:translateY(0)}
+.nv-cookie .txt{flex:1 1 240px;font-size:13px;line-height:1.5;color:rgba(255,255,255,.78)}
+.nv-cookie .txt a{color:#FF6F61;text-decoration:underline;text-underline-offset:2px}
+.nv-cookie .btn{flex:0 0 auto;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:13.5px;padding:11px 22px;border-radius:10px;background:linear-gradient(90deg,#FF6F61,#E04E40);color:#fff;transition:filter .2s,transform .1s}
+.nv-cookie .btn:hover{filter:brightness(1.08)}
+.nv-cookie .btn:active{transform:scale(.97)}
+</style>
+<div class="nv-cookie" id="nvCookie" role="dialog" aria-label="Уведомление о файлах cookie">
+  <div class="txt">Мы используем файлы cookie для корректной работы сайта. Продолжая пользоваться сайтом, вы соглашаетесь с этим. <a href="privacy.html" target="_blank" rel="noopener">Подробнее</a></div>
+  <button class="btn" id="nvCookieOk" type="button">Принять</button>
+</div>
+<script>
+(function(){
+  var KEY='nv_cookie_ok', el=document.getElementById('nvCookie'), btn=document.getElementById('nvCookieOk');
+  if(!el) return;
+  try{ if(localStorage.getItem(KEY)==='1') return; }catch(e){}
+  setTimeout(function(){ el.classList.add('show'); }, 900);
+  btn.addEventListener('click', function(){
+    try{ localStorage.setItem(KEY,'1'); }catch(e){}
+    el.classList.remove('show');
+    setTimeout(function(){ el.style.display='none'; }, 500);
+  });
 })();
 </script>
 
