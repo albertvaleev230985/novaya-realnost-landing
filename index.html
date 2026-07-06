@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ИИ. Новая реальность — онлайн-курс neovida</title>
-<meta name="description" content="Онлайн-курс «ИИ. Новая реальность». Поток 3. Старт 17 июня 2026. 8 занятий, 2 месяца, среда 19:00–21:00 МСК. neovida — компания AI-трансформации, образовательная лицензия.">
+<title>ИИ. Новая реальность — курс neovida · онлайн и офлайн в Уфе</title>
+<meta name="description" content="Курс «ИИ. Новая реальность». Поток 4. Онлайн: старт 22 июля 2026, среда 19:00–21:00 МСК, 20 000 ₽. Офлайн в Уфе: старт 23 июля, вторник и четверг 19:00–21:00, 35 000 ₽. 8 занятий. neovida — компания AI-трансформации, образовательная лицензия.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&family=Onest:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -5459,6 +5459,187 @@ body.ask-open{ overflow:hidden; }
   .t-close{ top:14px; right:14px; }
 }
 
+/* ══════════════════════════════════════════════════════
+   ФОРМАТ: онлайн / офлайн — переключатель и зависимые блоки
+   ══════════════════════════════════════════════════════ */
+
+/* Показ/скрытие блоков по выбранному формату */
+body[data-format="online"] .only-offline{ display:none !important; }
+body[data-format="offline"] .only-online{ display:none !important; }
+
+/* Сегмент-переключатель (hero + CTA) */
+.fmt-switch{
+  display:inline-flex;
+  gap:4px;
+  padding:4px;
+  border:1px solid var(--rule);
+  border-radius:999px;
+  background:rgba(255,255,255,0.04);
+  margin:20px 0 2px;
+}
+.fmt-btn{
+  appearance:none;
+  border:0;
+  background:transparent;
+  color:var(--mid);
+  font-family:inherit;
+  font-size:14.5px;
+  font-weight:600;
+  letter-spacing:.01em;
+  padding:10px 20px;
+  border-radius:999px;
+  cursor:pointer;
+  white-space:nowrap;
+  transition:color .22s ease, background .22s ease, box-shadow .22s ease;
+}
+.fmt-btn:hover{ color:#fff; }
+.fmt-btn.is-active{
+  background:var(--coral);
+  color:#fff;
+  box-shadow:0 4px 18px var(--coral-glow);
+}
+@media (max-width:640px){
+  .fmt-btn{ padding:9px 14px; font-size:13.5px; }
+}
+
+/* Выбор формата внутри формы записи — ОБЯЗАТЕЛЬНОЕ поле */
+.signup-format{ margin-bottom:2px; }
+.signup-format > .lbl{
+  display:block;
+  font-size:12.5px;
+  font-weight:600;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:var(--mid);
+  margin-bottom:8px;
+}
+.signup-format > .lbl .req{ color:var(--coral); text-transform:none; letter-spacing:0; font-weight:500; }
+.fmt-opts{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (max-width:460px){ .fmt-opts{ grid-template-columns:1fr; } }
+.fmt-opt{
+  display:block;
+  position:relative;
+  padding:13px 14px 12px;
+  border:1.5px solid var(--rule);
+  border-radius:14px;
+  background:rgba(255,255,255,0.03);
+  cursor:pointer;
+  transition:border-color .2s ease, background .2s ease;
+  text-align:left;
+}
+.fmt-opt:hover{ border-color:rgba(255,255,255,0.25); }
+.fmt-opt input{ position:absolute; opacity:0; pointer-events:none; }
+.fmt-opt .t{ display:block; font-size:15px; font-weight:700; color:#fff; line-height:1.2; }
+.fmt-opt .d{ display:block; font-size:12px; color:var(--mid); margin-top:6px; line-height:1.5; }
+.fmt-opt.is-picked{ border-color:var(--coral); background:rgba(255,111,97,0.08); }
+.fmt-opt.is-picked .t{ color:var(--coral); }
+.fmt-opt.is-picked::after{
+  content:'✓';
+  position:absolute;
+  top:10px; right:12px;
+  color:var(--coral);
+  font-size:14px;
+  font-weight:800;
+}
+.signup-format.is-error .fmt-opt{ border-color:#E24B4A; }
+.fmt-err{
+  display:none;
+  font-size:12.5px;
+  color:#FF8A80;
+  margin-top:8px;
+}
+.signup-format.is-error .fmt-err{ display:block; }
+
+/* Чипы формата в окне «Задать вопрос» (необязательные) */
+.ask-fmt{ display:flex; gap:8px; flex-wrap:wrap; }
+.ask-chip{
+  appearance:none;
+  border:1px solid var(--rule);
+  background:rgba(255,255,255,0.03);
+  color:var(--mid);
+  font-family:inherit;
+  font-size:12.5px;
+  font-weight:600;
+  padding:8px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.ask-chip:hover{ color:#fff; border-color:rgba(255,255,255,0.25); }
+.ask-chip.is-picked{ background:var(--coral); border-color:var(--coral); color:#fff; }
+
+/* Адресный блок офлайна в CTA */
+.cta-address{
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) 1.15fr;
+  gap:26px;
+  margin-top:30px;
+  padding:26px;
+  border:1px solid var(--rule);
+  border-radius:20px;
+  background:var(--night-soft);
+}
+@media (max-width:760px){
+  .cta-address{ grid-template-columns:1fr; padding:20px; }
+}
+.cta-address .adr-cap{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:12.5px;
+  font-weight:600;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--mid);
+}
+.cta-address .adr-cap .dot{
+  width:7px; height:7px; border-radius:50%;
+  background:var(--coral);
+  box-shadow:0 0 10px var(--coral-glow);
+}
+.cta-address .adr-name{
+  font-size:clamp(20px,2.6vw,26px);
+  font-weight:800;
+  color:#fff;
+  margin-top:12px;
+  letter-spacing:-.01em;
+}
+.cta-address .adr-line{
+  font-size:15.5px;
+  color:rgba(255,255,255,0.78);
+  margin-top:8px;
+  line-height:1.5;
+}
+.cta-address .adr-line strong{ color:#fff; font-weight:600; }
+.cta-address .adr-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+.cta-address .adr-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:10px 16px;
+  border:1px solid var(--rule);
+  border-radius:999px;
+  color:rgba(255,255,255,0.85);
+  font-size:13.5px;
+  font-weight:600;
+  text-decoration:none;
+  transition:all .2s ease;
+}
+.cta-address .adr-btn:hover{ border-color:var(--coral); color:var(--coral); }
+.cta-address .adr-map{
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid var(--rule);
+  min-height:240px;
+}
+.cta-address .adr-map iframe{
+  display:block;
+  width:100%;
+  height:100%;
+  min-height:240px;
+  border:0;
+}
+
 </style>
 </head>
 <body>
@@ -5495,7 +5676,7 @@ body.ask-open{ overflow:hidden; }
           <span class="bar"></span>
           <span>neovida</span>
           <span class="slash">/</span>
-          <span>онлайн-курс · поток 3</span>
+          <span data-f="eyebrow">онлайн-курс · поток 4</span>
         </div>
         <h1 class="hero-title">
           <span class="mask-reveal"><span>ИИ.</span></span>
@@ -5507,25 +5688,30 @@ body.ask-open{ overflow:hidden; }
           Будущее уже наступило, просто распределено неравномерно.
         </p>
 
+        <div class="fmt-switch reveal d4" role="tablist" aria-label="Формат обучения">
+          <button type="button" class="fmt-btn is-active" data-fmt="online" role="tab" aria-selected="true">Онлайн</button>
+          <button type="button" class="fmt-btn" data-fmt="offline" role="tab" aria-selected="false">Офлайн · Уфа</button>
+        </div>
+
         <div class="hero-meta reveal d5">
-          <div>Старт<strong>17 июня 2026</strong></div>
-          <div>Формат<strong>Онлайн, Zoom</strong></div>
-          <div>Расписание<strong>среда, 19:00–21:00 МСК</strong></div>
-          <div>Длительность<strong>8 занятий · 2 месяца</strong></div>
+          <div>Старт<strong data-f="metaStart">22 июля 2026</strong></div>
+          <div>Формат<strong data-f="metaFormat">Онлайн, Zoom</strong></div>
+          <div>Расписание<strong data-f="metaSched">среда, 19:00–21:00 МСК</strong></div>
+          <div>Длительность<strong data-f="metaDur">8 занятий · 2 месяца</strong></div>
         </div>
 
         <div class="hero-status reveal d5">
           <span class="pulse"></span>
           <span class="lbl">Открыта запись</span>
           <span class="sep">·</span>
-          <strong>Всего 20 мест</strong>
+          <strong data-f="heroPlaces">Всего 20 мест</strong>
           <span class="sep">·</span>
           <span>группа собирается за ~10 дней</span>
         </div>
 
         <div class="hero-ctas reveal d6">
           <button type="button" class="btn" data-magnetic data-signup>
-            <span>Записаться на поток 3</span>
+            <span>Записаться на поток 4</span>
             <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
           </button>
           <a href="#program" class="btn ghost">
@@ -5943,7 +6129,7 @@ body.ask-open{ overflow:hidden; }
       <h2 class="t-h1 reveal d1" style="margin-top:14px;">
         Что меняется, когда ИИ <span class="it">встроен в день</span>.
       </h2>
-      <p class="lead t-lead reveal d2">Слева — где сейчас большинство. Справа — куда вы выйдете через 2 месяца.</p>
+      <p class="lead t-lead reveal d2">Слева — где сейчас большинство. Справа — куда вы выйдете <span data-f="valueDur">через 2 месяца</span>.</p>
     </div>
 
     <div class="pain-list">
@@ -6550,7 +6736,7 @@ body.ask-open{ overflow:hidden; }
       <div class="stops">
 
         <div class="stop reveal d1">
-          <div class="num">01 · 17 ИЮНЯ</div>
+          <div class="num" data-f-date="0">01 · 22 ИЮЛЯ</div>
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
           <div class="lvl">Уровень 1 · Старт</div>
           <h3>Навигатор</h3>
@@ -6563,7 +6749,7 @@ body.ask-open{ overflow:hidden; }
         </div>
 
         <div class="stop reveal d2">
-          <div class="num">02 · 24 ИЮНЯ</div>
+          <div class="num" data-f-date="1">02 · 29 ИЮЛЯ</div>
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
           <div class="lvl">Уровень 1</div>
           <h3>Мышление</h3>
@@ -6576,7 +6762,7 @@ body.ask-open{ overflow:hidden; }
         </div>
 
         <div class="stop reveal d3">
-          <div class="num">03 · 1 ИЮЛЯ</div>
+          <div class="num" data-f-date="2">03 · 5 АВГУСТА</div>
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
           <div class="lvl">Уровень 1</div>
           <h3>Ассистентный подход</h3>
@@ -6589,7 +6775,7 @@ body.ask-open{ overflow:hidden; }
         </div>
 
         <div class="stop reveal d4">
-          <div class="num">04 · 8 ИЮЛЯ</div>
+          <div class="num" data-f-date="3">04 · 12 АВГУСТА</div>
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg></div>
           <div class="lvl">Уровень 2</div>
           <h3>Google Workspace + Gemini</h3>
@@ -6602,7 +6788,7 @@ body.ask-open{ overflow:hidden; }
         </div>
 
         <div class="stop reveal d1">
-          <div class="num">05 · 15 ИЮЛЯ</div>
+          <div class="num" data-f-date="4">05 · 19 АВГУСТА</div>
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
           <div class="lvl">Уровень 2</div>
           <h3>Данные</h3>
@@ -6615,7 +6801,7 @@ body.ask-open{ overflow:hidden; }
         </div>
 
         <div class="stop reveal d2">
-          <div class="num">06 · 22 ИЮЛЯ</div>
+          <div class="num" data-f-date="5">06 · 26 АВГУСТА</div>
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
           <div class="lvl">Уровень 2</div>
           <h3>Визуал</h3>
@@ -6628,7 +6814,7 @@ body.ask-open{ overflow:hidden; }
         </div>
 
         <div class="stop peak reveal d3">
-          <div class="num">07 · 29 ИЮЛЯ</div>
+          <div class="num" data-f-date="6">07 · 2 СЕНТЯБРЯ</div>
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg></div>
           <div class="lvl">Уровень 3 · Пик</div>
           <h3>Агенты</h3>
@@ -6641,7 +6827,7 @@ body.ask-open{ overflow:hidden; }
         </div>
 
         <div class="stop peak reveal d4">
-          <div class="num">08 · 5 АВГУСТА</div>
+          <div class="num" data-f-date="7">08 · 9 СЕНТЯБРЯ</div>
           <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M9 18l3 3 3-3"/><path d="M9 14l3 4 3-4"/></svg></div>
           <div class="lvl">Уровень 3 · Финал</div>
           <h3>Стратегия и финал</h3>
@@ -7080,11 +7266,11 @@ body.ask-open{ overflow:hidden; }
   <div class="divider-line"></div>
   <div class="wrap">
     <div class="head">
-      <div class="t-cap reveal">Через 2 месяца</div>
+      <div class="t-cap reveal" data-f="afterCap">Через 2 месяца</div>
       <h2 class="t-h1 reveal d1" style="margin-top:14px;">
         Это уже <span class="it">другая</span> картина мира.
       </h2>
-      <p class="lead t-lead reveal d2">Шесть конкретных вещей, которых сейчас у вас нет — и которые останутся после 5 августа.</p>
+      <p class="lead t-lead reveal d2">Шесть конкретных вещей, которых сейчас у вас нет — и которые останутся <span data-f="afterEnd">после 9 сентября</span>.</p>
     </div>
 
     <div class="after-grid">
@@ -7312,6 +7498,14 @@ body.ask-open{ overflow:hidden; }
         <span class="lbl">Вопрос</span>
         <textarea name="question" required minlength="3" maxlength="800" rows="4" placeholder="Что хотите узнать о курсе?"></textarea>
       </label>
+      <div class="ask-field">
+        <span class="lbl">Какой формат интересует <span class="opt">— если уже знаете</span></span>
+        <div class="ask-fmt" id="askFmt">
+          <button type="button" class="ask-chip" data-ask-fmt="Онлайн">Онлайн</button>
+          <button type="button" class="ask-chip" data-ask-fmt="Офлайн · Уфа">Офлайн · Уфа</button>
+          <button type="button" class="ask-chip" data-ask-fmt="Ещё выбираю">Ещё выбираю</button>
+        </div>
+      </div>
 
       <!-- honeypot -->
       <input type="text" name="company" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;" aria-hidden="true">
@@ -7342,11 +7536,27 @@ body.ask-open{ overflow:hidden; }
 
   <!-- Шаг 1: форма -->
   <div class="signup-card signup-step-form" data-step="form">
-    <div class="signup-eyebrow"><span class="dot"></span>Поток 3 · старт 17 июня</div>
-    <h3 id="signupTitle" class="signup-title">Запись на поток 3</h3>
+    <div class="signup-eyebrow"><span class="dot"></span>Поток 4 · онлайн с 22 июля · офлайн с 23 июля</div>
+    <h3 id="signupTitle" class="signup-title">Запись на поток 4</h3>
     <p class="signup-sub">Оставьте контакты — менеджер свяжется в течение 24 часов, расскажет детали, ответит на вопросы.</p>
 
     <form class="signup-form" id="signupForm" autocomplete="on" novalidate>
+      <div class="signup-format" id="signupFormat">
+        <span class="lbl">Формат обучения <span class="req">· обязательно</span></span>
+        <div class="fmt-opts">
+          <label class="fmt-opt">
+            <input type="radio" name="format" value="online">
+            <span class="t">Онлайн</span>
+            <span class="d">с 22 июля · среда 19:00 МСК<br>20 000 ₽ за курс</span>
+          </label>
+          <label class="fmt-opt">
+            <input type="radio" name="format" value="offline">
+            <span class="t">Офлайн · Уфа</span>
+            <span class="d">с 23 июля · вт и чт 19:00<br>35 000 ₽ за курс · 7 мест</span>
+          </label>
+        </div>
+        <div class="fmt-err">Выберите формат обучения — онлайн или офлайн</div>
+      </div>
       <label class="signup-field">
         <span class="lbl">Имя</span>
         <input type="text" name="name" required maxlength="80" autocomplete="given-name" placeholder="Как вас зовут">
@@ -7506,11 +7716,15 @@ body.ask-open{ overflow:hidden; }
   <div class="divider-line"></div>
   <div class="wrap" style="position:relative;z-index:2;">
     <div class="cta-head reveal">
-      <div class="pre">Поток 3 · Старт 17 июня 2026</div>
+      <div class="pre" data-f="ctaPre">Поток 4 · Онлайн · Старт 22 июля 2026</div>
       <h1 class="cta-h reveal d1">
         Запись <span class="it">открыта.</span>
       </h1>
-      <p class="cta-lead reveal d2">8 занятий · 2 месяца обучения · каждую среду 19:00–21:00 МСК</p>
+      <p class="cta-lead reveal d2" data-f="ctaLead">8 занятий · 2 месяца обучения · каждую среду 19:00–21:00 МСК</p>
+      <div class="fmt-switch reveal d2" role="tablist" aria-label="Формат обучения">
+        <button type="button" class="fmt-btn is-active" data-fmt="online" role="tab" aria-selected="true">Онлайн</button>
+        <button type="button" class="fmt-btn" data-fmt="offline" role="tab" aria-selected="false">Офлайн · Уфа</button>
+      </div>
     </div>
 
     <div class="cta-offer reveal d2">
@@ -7519,7 +7733,8 @@ body.ask-open{ overflow:hidden; }
       <div class="cta-program">
         <div class="cta-program-head">Что вы получите</div>
         <ul class="cta-features">
-          <li><span class="ck">✓</span><div><strong>16 часов</strong> живой практики в Zoom — с разбором у Альберта</div></li>
+          <li class="only-online"><span class="ck">✓</span><div><strong>16 часов</strong> живой практики в Zoom — с разбором у Альберта</div></li>
+          <li class="only-offline"><span class="ck">✓</span><div><strong>16 часов</strong> живой практики в классе в Уфе — лично с Альбертом</div></li>
           <li><span class="ck">✓</span><div><strong>8 домашек</strong> с персональной обратной связью</div></li>
           <li><span class="ck">✓</span><div><strong>26 шпаргалок</strong> и инструкций под ваши задачи</div></li>
           <li><span class="ck">✓</span><div><strong>Персональный стек 5–10 инструментов</strong> из 40+ на рынке</div></li>
@@ -7532,18 +7747,18 @@ body.ask-open{ overflow:hidden; }
       <div class="cta-pricing">
         <div class="cta-pricing-head">
           <span class="dot"></span>
-          <span>Поток 3 · старт 17 июня</span>
+          <span data-f="pricingHead">Онлайн · старт 22 июля</span>
         </div>
 
         <div class="cta-price">
-          <span class="num">20 000</span>
+          <span class="num" data-f="priceNum">20 000</span>
           <span class="cur">₽</span>
         </div>
-        <div class="cta-price-sub">за весь курс · 8 занятий · 2 месяца</div>
+        <div class="cta-price-sub" data-f="priceSub">за весь курс, оплата сразу · 8 занятий · 2 месяца</div>
 
         <div class="cta-stats">
           <div class="stat">
-            <span class="b"><span class="hund">20</span></span>
+            <span class="b"><span class="hund" data-f="statPlaces">20</span></span>
             <span class="l">мест в группе</span>
           </div>
           <div class="stat-divider"></div>
@@ -7554,7 +7769,7 @@ body.ask-open{ overflow:hidden; }
         </div>
 
         <button type="button" class="cta-cta" data-magnetic data-signup>
-          <span>Записаться на поток 3</span>
+          <span>Записаться на поток 4</span>
           <span class="arrow"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
         </button>
 
@@ -7562,9 +7777,27 @@ body.ask-open{ overflow:hidden; }
       </div>
     </div>
 
+    <!-- Адрес класса — только для офлайн-формата -->
+    <div class="cta-address only-offline reveal d3">
+      <div class="adr-info">
+        <div class="adr-cap"><span class="dot"></span>Где проходят занятия</div>
+        <div class="adr-name">Бизнес-центр Iremel Tower</div>
+        <div class="adr-line"><strong>Уфа, ул. Менделеева, 137/3</strong></div>
+        <div class="adr-line">15 этаж · офис 236 · учебный класс neovida</div>
+        <div class="adr-line">Занятия по вторникам и четвергам, 19:00–21:00. Группа до 7 человек — каждому хватает внимания.</div>
+        <div class="adr-actions">
+          <a class="adr-btn" href="https://yandex.ru/maps/?text=%D0%A3%D1%84%D0%B0%2C%20%D0%9C%D0%B5%D0%BD%D0%B4%D0%B5%D0%BB%D0%B5%D0%B5%D0%B2%D0%B0%20137%2F3" target="_blank" rel="noopener">Яндекс Карты</a>
+          <a class="adr-btn" href="https://2gis.ru/ufa/search/%D0%9C%D0%B5%D0%BD%D0%B4%D0%B5%D0%BB%D0%B5%D0%B5%D0%B2%D0%B0%20137%2F3" target="_blank" rel="noopener">2ГИС</a>
+        </div>
+      </div>
+      <div class="adr-map">
+        <iframe src="https://yandex.ru/map-widget/v1/?text=%D0%A3%D1%84%D0%B0%2C%20%D0%9C%D0%B5%D0%BD%D0%B4%D0%B5%D0%BB%D0%B5%D0%B5%D0%B2%D0%B0%20137%2F3&amp;z=16" loading="lazy" title="Карта: Уфа, Менделеева 137/3, Iremel Tower"></iframe>
+      </div>
+    </div>
+
     <div class="cta-warning reveal d3">
       <span class="dot"></span>
-      <span class="cta-warning-text">Когда наберём <span class="it">20 человек</span> — приём на этот поток закрывается. Кто не успел — ждёт следующего набора.</span>
+      <span class="cta-warning-text">Когда наберём <span class="it" data-f="warnPeople">20 человек</span> — приём на этот поток закрывается. Кто не успел — ждёт следующего набора.</span>
     </div>
 
     <!-- FOMO -->
@@ -7642,8 +7875,8 @@ body.ask-open{ overflow:hidden; }
       </div>
       <div class="lbl">Решение</div>
       <p class="q">Можно изучать ИИ урывками по статьям и видео ещё полгода — и так и не собрать систему.</p>
-      <p class="a">А можно <span class="it">за 2 месяца</span> выйти со своим стеком, командой ассистентов и понятным планом на год.</p>
-      <p class="a2">Старт — среда, 17 июня. 19:00 МСК.</p>
+      <p class="a">А можно <span class="it" data-f="fomoDur">за 2 месяца</span> выйти со своим стеком, командой ассистентов и понятным планом на год.</p>
+      <p class="a2" data-f="fomoStart">Старт — среда, 22 июля. 19:00 МСК.</p>
     </div>
 
   </div>
@@ -7675,7 +7908,7 @@ body.ask-open{ overflow:hidden; }
     <div class="nvf-grid">
       <div>
         <div class="nvf-brand">neovida<b>.ai</b></div>
-        <div class="nvf-tag">Онлайн-курс «ИИ. Новая реальность». Образовательная платформа компании AI-трансформации.</div>
+        <div class="nvf-tag">Курс «ИИ. Новая реальность» — онлайн и офлайн в Уфе. Образовательная платформа компании AI-трансформации.</div>
         <div class="nvf-lic"><b>Образовательная лицензия</b>№ Л035-01198-02/04299563 от 04.02.2026</div>
       </div>
       <div class="nvf-col">
@@ -7705,6 +7938,98 @@ body.ask-open{ overflow:hidden; }
     </div>
   </div>
 </footer>
+
+<script>
+/* ═════════════════════════════════════════════════════
+   ФОРМАТ КУРСА: онлайн / офлайн (Уфа)
+   Один лендинг — два набора дат, цен и расписаний.
+   Прямые ссылки: ?format=online / ?format=offline
+   ═════════════════════════════════════════════════════ */
+(function(){
+  'use strict';
+
+  var FMT = {
+    online: {
+      eyebrow:    'онлайн-курс · поток 4',
+      metaStart:  '22 июля 2026',
+      metaFormat: 'Онлайн, Zoom',
+      metaSched:  'среда, 19:00–21:00 МСК',
+      metaDur:    '8 занятий · 2 месяца',
+      heroPlaces: 'Всего 20 мест',
+      valueDur:   'через 2 месяца',
+      afterCap:   'Через 2 месяца',
+      afterEnd:   'после 9 сентября',
+      ctaPre:     'Поток 4 · Онлайн · Старт 22 июля 2026',
+      ctaLead:    '8 занятий · 2 месяца обучения · каждую среду 19:00–21:00 МСК',
+      pricingHead:'Онлайн · старт 22 июля',
+      priceNum:   '20 000',
+      priceSub:   'за весь курс, оплата сразу · 8 занятий · 2 месяца',
+      statPlaces: '20',
+      warnPeople: '20 человек',
+      fomoDur:    'за 2 месяца',
+      fomoStart:  'Старт — среда, 22 июля. 19:00 МСК.',
+      dates: ['22 ИЮЛЯ','29 ИЮЛЯ','5 АВГУСТА','12 АВГУСТА','19 АВГУСТА','26 АВГУСТА','2 СЕНТЯБРЯ','9 СЕНТЯБРЯ']
+    },
+    offline: {
+      eyebrow:    'офлайн-курс в Уфе · поток 4',
+      metaStart:  '23 июля 2026',
+      metaFormat: 'Офлайн, класс в Уфе',
+      metaSched:  'вт и чт, 19:00–21:00 (Уфа)',
+      metaDur:    '8 занятий · 1 месяц',
+      heroPlaces: 'Всего 7 мест',
+      valueDur:   'через месяц',
+      afterCap:   'Через месяц',
+      afterEnd:   'после 18 августа',
+      ctaPre:     'Поток 4 · Офлайн Уфа · Старт 23 июля 2026',
+      ctaLead:    '8 занятий · 1 месяц · вторник и четверг, 19:00–21:00 по Уфе',
+      pricingHead:'Офлайн Уфа · старт 23 июля',
+      priceNum:   '35 000',
+      priceSub:   'за весь курс, оплата сразу · 8 занятий · 1 месяц',
+      statPlaces: '7',
+      warnPeople: '7 человек',
+      fomoDur:    'за месяц',
+      fomoStart:  'Старт — четверг, 23 июля. 19:00 по Уфе.',
+      dates: ['23 ИЮЛЯ','28 ИЮЛЯ','30 ИЮЛЯ','4 АВГУСТА','6 АВГУСТА','11 АВГУСТА','13 АВГУСТА','18 АВГУСТА']
+    }
+  };
+
+  function apply(f, updateUrl){
+    if (!FMT[f]) f = 'online';
+    var d = FMT[f];
+    document.body.setAttribute('data-format', f);
+    window.__format = f;
+
+    document.querySelectorAll('[data-f]').forEach(function(el){
+      var k = el.getAttribute('data-f');
+      if (d[k] != null) el.textContent = d[k];
+    });
+    document.querySelectorAll('[data-f-date]').forEach(function(el){
+      var i = parseInt(el.getAttribute('data-f-date'), 10);
+      if (d.dates[i]) el.textContent = (i + 1 < 10 ? '0' : '') + (i + 1) + ' · ' + d.dates[i];
+    });
+    document.querySelectorAll('.fmt-btn').forEach(function(b){
+      var on = b.getAttribute('data-fmt') === f;
+      b.classList.toggle('is-active', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+
+    if (updateUrl) {
+      try { history.replaceState(null, '', location.pathname + '?format=' + f + location.hash); } catch(_){}
+    }
+  }
+
+  document.querySelectorAll('.fmt-btn').forEach(function(b){
+    b.addEventListener('click', function(){ apply(b.getAttribute('data-fmt'), true); });
+  });
+
+  // Стартовый формат из URL: ?format=offline, ?offline, #офлайн, ?уфа …
+  var raw = location.search + ' ' + location.hash;
+  try { raw = decodeURIComponent(raw); } catch(_){}
+  raw = raw.toLowerCase();
+  var init = /(offline|оффлайн|офлайн|уфа|ufa|очно)/.test(raw) ? 'offline' : 'online';
+  apply(init, false);
+})();
+</script>
 
 <script>
 /* ═════════════════════════════════════════════════════
@@ -7747,6 +8072,18 @@ if ('scrollRestoration' in history) {
     var submit = modal.querySelector('.signup-submit');
     var thanksName = modal.querySelector('.signup-thanks-name');
     var lastFocus = null;
+    var fmtWrap = document.getElementById('signupFormat');
+
+    // Подсветка выбранной карточки формата + сброс ошибки при выборе
+    form.querySelectorAll('input[name="format"]').forEach(function(r){
+      r.addEventListener('change', function(){
+        form.querySelectorAll('.fmt-opt').forEach(function(l){
+          var inp = l.querySelector('input');
+          l.classList.toggle('is-picked', !!(inp && inp.checked));
+        });
+        if (fmtWrap) fmtWrap.classList.remove('is-error');
+      });
+    });
 
     function open(){
       lastFocus = document.activeElement;
@@ -7754,6 +8091,9 @@ if ('scrollRestoration' in history) {
       formStep.hidden = false;
       thanksStep.hidden = true;
       form.reset();
+      // Формат каждый раз выбирают заново — осознанно
+      form.querySelectorAll('.fmt-opt.is-picked').forEach(function(l){ l.classList.remove('is-picked'); });
+      if (fmtWrap) fmtWrap.classList.remove('is-error');
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('signup-open');
@@ -7813,15 +8153,32 @@ if ('scrollRestoration' in history) {
           input.classList.remove('is-error');
         }
       });
+
+      // ОБЯЗАТЕЛЬНЫЙ выбор формата — без него заявка не уходит
+      var fmtChecked = form.querySelector('input[name="format"]:checked');
+      if (!fmtChecked) {
+        if (fmtWrap) {
+          fmtWrap.classList.add('is-error');
+          try { fmtWrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(_){}
+        }
+        ok = false;
+      }
       if (!ok) return;
+
+      var isOffline = fmtChecked.value === 'offline';
+      var fmtLabel = isOffline ? 'ОФЛАЙН · УФА' : 'ОНЛАЙН';
+      var fmtHuman = isOffline
+        ? 'Офлайн · Уфа (старт 23.07, вт и чт 19:00, 35 000 ₽)'
+        : 'Онлайн (старт 22.07, среда 19:00 МСК, 20 000 ₽)';
 
       var payload = {
         name: name,
         city: city,
         phone: phone,
         telegram: telegram,
+        format: fmtChecked.value,
         source: 'novaya-realnost.html',
-        stream: 'Поток 3',
+        stream: isOffline ? 'Поток 4 · Офлайн Уфа' : 'Поток 4 · Онлайн',
         timestamp: new Date().toISOString(),
         url: location.href
       };
@@ -7843,7 +8200,8 @@ if ('scrollRestoration' in history) {
       }
 
       var tgText =
-        '🟢 <b>Новая заявка · поток 3</b>\n\n' +
+        '🟢 <b>Новая заявка · поток 4 · ' + fmtLabel + '</b>\n\n' +
+        '<b>Формат:</b> ' + tgEscape(fmtHuman) + '\n' +
         '<b>Имя:</b> ' + tgEscape(name) + '\n' +
         '<b>Город:</b> ' + tgEscape(city) + '\n' +
         '<b>Телефон:</b> ' + tgEscape(phone) + '\n' +
@@ -8232,6 +8590,19 @@ if ('scrollRestoration' in history) {
     var form = modal.querySelector('#askForm');
     var submit = modal.querySelector('.ask-submit');
     var thanksName = modal.querySelector('.ask-thanks-name');
+
+    // Необязательные чипы формата: повторный клик снимает выбор
+    var askFmtVal = '';
+    var askChips = modal.querySelectorAll('#askFmt .ask-chip');
+    askChips.forEach(function(c){
+      c.addEventListener('click', function(){
+        var v = c.getAttribute('data-ask-fmt');
+        askFmtVal = (askFmtVal === v) ? '' : v;
+        askChips.forEach(function(x){
+          x.classList.toggle('is-picked', x.getAttribute('data-ask-fmt') === askFmtVal);
+        });
+      });
+    });
     var lastFocus = null;
 
     function open(){
@@ -8239,6 +8610,8 @@ if ('scrollRestoration' in history) {
       formStep.hidden = false;
       thanksStep.hidden = true;
       form.reset();
+      askFmtVal = '';
+      askChips.forEach(function(x){ x.classList.remove('is-picked'); });
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('ask-open');
@@ -8305,6 +8678,7 @@ if ('scrollRestoration' in history) {
         '💬 <b>Вопрос с лендинга</b>\n\n' +
         '<b>Имя:</b> ' + tgEscape(name) + '\n' +
         '<b>Telegram:</b> ' + tgEscape(telegram) + '\n' +
+        (askFmtVal ? '<b>Интересует формат:</b> ' + tgEscape(askFmtVal) + '\n' : '') +
         '\n<b>Вопрос:</b>\n' + tgEscape(question) + '\n\n' +
         '<i>с лендинга «ИИ. Новая реальность» · маскот-чат</i>';
 
