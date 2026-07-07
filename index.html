@@ -5113,20 +5113,23 @@ body.signup-open{ overflow:hidden; }
   letter-spacing:-0.005em;
   line-height:1.3;
   white-space:nowrap;
-  box-shadow:0 12px 32px -8px rgba(0,0,0,.6);
+  /* Тень через filter, а не box-shadow: она обнимает облако ВМЕСТЕ с хвостиком
+     как единую фигуру — иначе хвостик выглядит приставной деталью */
+  filter:drop-shadow(0 12px 18px rgba(0,0,0,.5));
   pointer-events:none;
   opacity:0;
   transform:translateX(6px) scale(.94);
   transition:opacity 280ms ease, transform 280ms cubic-bezier(.16,1,.3,1);
 }
+/* Хвостик — повёрнутый квадрат, наполовину утопленный в облако: шва нет физически */
 .mascot-bubble::after{
   content:'';
   position:absolute;
-  right:-7px; bottom:18px;
-  width:0; height:0;
-  border:7px solid transparent;
-  border-left-color:var(--ivory);
-  border-right:0;
+  right:-5px; bottom:15px;
+  width:14px; height:14px;
+  background:var(--ivory);
+  border-radius:2.5px;
+  transform:rotate(45deg);
 }
 .mascot.is-bubble .mascot-bubble{
   opacity:1;
@@ -5162,22 +5165,24 @@ body.signup-open{ overflow:hidden; }
     width:80px; height:88px;
   }
   .mascot-bubble{
-    right:auto; left:50%;
+    /* Прижато к правому краю (не центр маскота): длинный текст не вылезает за экран */
+    right:0; left:auto;
     bottom:96px;
-    transform:translateX(-50%) scale(.94);
+    transform:translateX(0) scale(.94);
     font-size:13px;
     padding:10px 14px;
   }
   .mascot-bubble::after{
-    right:auto; left:50%;
-    bottom:-7px; top:auto;
-    margin-left:-7px;
-    border:7px solid transparent;
-    border-top-color:var(--ivory);
-    border-bottom:0;
+    left:auto; right:32px;
+    bottom:-5px; top:auto;
+    margin-left:0;
+    width:14px; height:14px;
+    background:var(--ivory);
+    border-radius:2.5px;
+    transform:rotate(45deg);
   }
   .mascot.is-bubble .mascot-bubble{
-    transform:translateX(-50%) scale(1);
+    transform:translateX(0) scale(1);
   }
 }
 
@@ -5549,6 +5554,57 @@ body[data-format="offline"] .only-online{ display:none !important; }
   margin-top:8px;
 }
 .signup-format.is-error .fmt-err{ display:block; }
+
+/* Согласие на обработку ПД — отдельная отметка в формах (ст. 9 152-ФЗ) */
+.pd-consent{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  cursor:pointer;
+  margin:2px 0 0;
+  user-select:none;
+}
+.pd-consent input{ position:absolute; opacity:0; pointer-events:none; }
+.pd-consent .pd-box{
+  flex:0 0 auto;
+  width:19px; height:19px;
+  margin-top:1px;
+  border:1.5px solid var(--rule);
+  border-radius:6px;
+  background:rgba(255,255,255,0.04);
+  position:relative;
+  transition:border-color .2s ease, background .2s ease;
+}
+.pd-consent:hover .pd-box{ border-color:rgba(255,255,255,0.35); }
+.pd-consent input:checked + .pd-box{
+  background:var(--coral);
+  border-color:var(--coral);
+}
+.pd-consent input:checked + .pd-box::after{
+  content:'';
+  position:absolute;
+  left:5.5px; top:2px;
+  width:5px; height:9px;
+  border:solid #fff;
+  border-width:0 2px 2px 0;
+  transform:rotate(45deg);
+}
+.pd-consent .pd-txt{
+  font-size:12px;
+  line-height:1.55;
+  color:var(--mid);
+}
+.pd-consent .pd-txt a{ color:var(--coral); text-decoration:underline; text-underline-offset:2px; }
+.pd-consent.is-error .pd-box{ border-color:#E24B4A; }
+.pd-consent.is-error .pd-txt{ color:#FF8A80; }
+.pd-err{
+  display:none;
+  font-size:12px;
+  color:#FF8A80;
+  margin-top:6px;
+}
+.pd-consent.is-error ~ .pd-err,
+.pd-consent.is-error + .pd-err{ display:block; }
 
 /* Чипы формата в окне «Задать вопрос» (необязательные) */
 .ask-fmt{ display:flex; gap:8px; flex-wrap:wrap; }
@@ -7534,11 +7590,18 @@ body[data-format="offline"] .only-online{ display:none !important; }
       <!-- honeypot -->
       <input type="text" name="company" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;" aria-hidden="true">
 
+      <!-- Согласие на обработку ПД — отдельная отметка (ст. 9 152-ФЗ, ред. 156-ФЗ) -->
+      <label class="pd-consent" id="askConsent">
+        <input type="checkbox" name="pd">
+        <span class="pd-box" aria-hidden="true"></span>
+        <span class="pd-txt">Даю <a href="soglasie.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a> на условиях <a href="privacy.html" target="_blank" rel="noopener">Политики конфиденциальности</a></span>
+      </label>
+      <div class="pd-err">Поставьте отметку о согласии — без неё мы не вправе обработать ваш вопрос</div>
+
       <button type="submit" class="ask-submit">
         <span class="ask-submit-label">Отправить вопрос</span>
         <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
       </button>
-      <p class="ask-disclaimer">Нажимая кнопку, вы соглашаетесь на обработку персональных данных в&nbsp;соответствии с&nbsp;<a href="privacy.html" target="_blank" rel="noopener" style="color:var(--coral);text-decoration:underline">Политикой конфиденциальности</a>.</p>
     </form>
   </div>
 
@@ -7601,11 +7664,18 @@ body[data-format="offline"] .only-online{ display:none !important; }
       <!-- Honeypot для ботов -->
       <input type="text" name="company" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;opacity:0;" aria-hidden="true">
 
+      <!-- Согласие на обработку ПД — отдельная отметка (ст. 9 152-ФЗ, ред. 156-ФЗ) -->
+      <label class="pd-consent" id="signupConsent">
+        <input type="checkbox" name="pd">
+        <span class="pd-box" aria-hidden="true"></span>
+        <span class="pd-txt">Даю <a href="soglasie.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a> на условиях <a href="privacy.html" target="_blank" rel="noopener">Политики конфиденциальности</a></span>
+      </label>
+      <div class="pd-err">Поставьте отметку о согласии — без неё мы не вправе принять заявку</div>
+
       <button type="submit" class="signup-submit">
         <span class="signup-submit-label">Записаться</span>
         <span class="arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
       </button>
-      <p class="signup-disclaimer">Нажимая кнопку, вы соглашаетесь на обработку персональных данных в&nbsp;соответствии с&nbsp;<a href="privacy.html" target="_blank" rel="noopener" style="color:var(--coral);text-decoration:underline">Политикой конфиденциальности</a>.</p>
     </form>
   </div>
 
@@ -7945,7 +8015,7 @@ body[data-format="offline"] .only-online{ display:none !important; }
       <div class="nvf-col">
         <div class="nvf-h">Документы</div>
         <a href="privacy.html">Политика конфиденциальности</a>
-        <a href="privacy.html">Согласие на обработку ПД</a>
+        <a href="soglasie.html">Согласие на обработку ПД</a>
         <a href="oferta.html">Договор-оферта</a>
       </div>
       <div class="nvf-col">
@@ -8109,6 +8179,13 @@ if ('scrollRestoration' in history) {
       });
     });
 
+    // Сброс ошибки согласия ПД при проставлении отметки
+    var pdInputS = form.querySelector('input[name="pd"]');
+    if (pdInputS) pdInputS.addEventListener('change', function(){
+      var w = document.getElementById('signupConsent');
+      if (w && pdInputS.checked) w.classList.remove('is-error');
+    });
+
     function open(){
       lastFocus = document.activeElement;
       // Сброс к форме при каждом открытии (на случай если до этого было «спасибо»)
@@ -8118,6 +8195,8 @@ if ('scrollRestoration' in history) {
       // Формат каждый раз выбирают заново — осознанно
       form.querySelectorAll('.fmt-opt.is-picked').forEach(function(l){ l.classList.remove('is-picked'); });
       if (fmtWrap) fmtWrap.classList.remove('is-error');
+      var pc = document.getElementById('signupConsent');
+      if (pc) pc.classList.remove('is-error');
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('signup-open');
@@ -8186,6 +8265,16 @@ if ('scrollRestoration' in history) {
           try { fmtWrap.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(_){}
         }
         ok = false;
+      }
+
+      // ОБЯЗАТЕЛЬНОЕ согласие на обработку ПД — отдельная отметка (ст. 9 152-ФЗ)
+      var pdBox = form.querySelector('input[name="pd"]');
+      var pdWrap = document.getElementById('signupConsent');
+      if (!pdBox || !pdBox.checked) {
+        if (pdWrap) pdWrap.classList.add('is-error');
+        ok = false;
+      } else if (pdWrap) {
+        pdWrap.classList.remove('is-error');
       }
       if (!ok) return;
 
@@ -8630,6 +8719,13 @@ if ('scrollRestoration' in history) {
         });
       });
     });
+
+    // Сброс ошибки согласия ПД при проставлении отметки
+    var pdInputA = form.querySelector('input[name="pd"]');
+    if (pdInputA) pdInputA.addEventListener('change', function(){
+      var w = document.getElementById('askConsent');
+      if (w && pdInputA.checked) w.classList.remove('is-error');
+    });
     var lastFocus = null;
 
     function open(){
@@ -8639,6 +8735,8 @@ if ('scrollRestoration' in history) {
       form.reset();
       askFmtVal = '';
       askChips.forEach(function(x){ x.classList.remove('is-picked'); });
+      var ac = document.getElementById('askConsent');
+      if (ac) ac.classList.remove('is-error');
       modal.classList.add('is-open');
       modal.setAttribute('aria-hidden', 'false');
       document.body.classList.add('ask-open');
@@ -8689,6 +8787,16 @@ if ('scrollRestoration' in history) {
           input.classList.remove('is-error');
         }
       });
+
+      // ОБЯЗАТЕЛЬНОЕ согласие на обработку ПД (ст. 9 152-ФЗ)
+      var pdBoxA = form.querySelector('input[name="pd"]');
+      var pdWrapA = document.getElementById('askConsent');
+      if (!pdBoxA || !pdBoxA.checked) {
+        if (pdWrapA) pdWrapA.classList.add('is-error');
+        ok = false;
+      } else if (pdWrapA) {
+        pdWrapA.classList.remove('is-error');
+      }
       if (!ok) return;
 
       // Telegram-бот тот же — переиспользуем токен
