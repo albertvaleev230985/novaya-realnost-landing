@@ -7489,7 +7489,7 @@ body[data-format="offline"] .only-online{ display:none !important; }
 
 <!-- ═══════════════ МАСКОТ — sticky widget ═══════════════ -->
 <div class="mascot" id="mascot" role="button" aria-label="Задать вопрос">
-  <div class="mascot-bubble" id="mascotBubble">Чем могу <span class="accent">помочь?</span></div>
+  <div class="mascot-bubble" id="mascotBubble">Привет! Чем могу <span class="accent">помочь?</span></div>
   <img id="mascotImg" src="mascot/idle/02.webp" alt="Маскот neovida" draggable="false">
 </div>
 
@@ -8561,12 +8561,15 @@ if ('scrollRestoration' in history) {
       }
     }, { passive: true });
 
-    // Hover — приветствие
+    // Hover — пузырь «Привет! Чем могу помочь?» + машет лапой
     mascot.addEventListener('mouseenter', function(){
+      mascot.classList.add('is-bubble');
       if (currentState === 'idle' || currentState === 'waiting'){
-        hideBubble();
         play('waving');
       }
+    });
+    mascot.addEventListener('mouseleave', function(){
+      hideBubble();
     });
 
     // Клик — прыжок + модалка
