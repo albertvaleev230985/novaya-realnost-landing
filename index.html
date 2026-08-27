@@ -8137,32 +8137,67 @@ window.REF_API = 'https://172-245-142-12.nip.io';
   var KEY = 'nv_ref';
   var TTL_DAYS = 90;
 
+  /* Метка живёт в трёх местах сразу. Память браузера бывает недоступна:
+     инкогнито, встроенный браузер мессенджера, запрет данных сайта.
+     Поэтому метка из адреса страницы имеет приоритет и держится
+     в переменной, а хранилище и cookie нужны, чтобы пережить переходы. */
+  var fromUrl = null;
+
+  function saveEverywhere(slug){
+    var payload = JSON.stringify({ slug: slug, ts: Date.now() });
+    try { localStorage.setItem(KEY, payload); } catch(_) {}
+    try { sessionStorage.setItem(KEY, payload); } catch(_) {}
+    try {
+      document.cookie = KEY + '=' + encodeURIComponent(payload) +
+        ';path=/;max-age=' + (TTL_DAYS * 86400) + ';SameSite=Lax';
+    } catch(_) {}
+  }
+
+  function readStored(){
+    var raw = null;
+    try { raw = localStorage.getItem(KEY); } catch(_) {}
+    if (!raw) { try { raw = sessionStorage.getItem(KEY); } catch(_) {} }
+    if (!raw) {
+      try {
+        var hit = document.cookie.match(/(?:^|;\s*)nv_ref=([^;]+)/);
+        if (hit) raw = decodeURIComponent(hit[1]);
+      } catch(_) {}
+    }
+    if (!raw) return null;
+    try {
+      var o = JSON.parse(raw);
+      if (!o || !o.slug || !o.ts) return null;
+      return o;
+    } catch(_) { return null; }
+  }
+
   var m = /[?&]ref=([a-zA-Z0-9_-]{1,32})/.exec(location.search);
   if (m) {
-    var slug = m[1].toLowerCase();
-    try {
-      localStorage.setItem(KEY, JSON.stringify({ slug: slug, ts: Date.now() }));
-    } catch(_) {}
+    fromUrl = m[1].toLowerCase();
+    saveEverywhere(fromUrl);
     try {
       fetch(window.REF_API + '/ref/click', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ref: slug })
+        body: JSON.stringify({ ref: fromUrl })
       }).catch(function(){});
     } catch(_) {}
   }
 
-  /* Читает метку. Протухшую (старше 90 дней) выбрасывает. */
+  /* Читает метку. Сначала адрес страницы, потом хранилище.
+     Протухшую (старше 90 дней) выбрасывает. */
   window.__nvRef = function(){
-    try {
-      var raw = localStorage.getItem(KEY);
-      if (!raw) return null;
-      var o = JSON.parse(raw);
-      if (!o || !o.slug || !o.ts) return null;
-      var age = (Date.now() - o.ts) / 86400000;
-      if (age > TTL_DAYS) { localStorage.removeItem(KEY); return null; }
-      return { slug: o.slug, age: Math.round(age * 100) / 100 };
-    } catch(_) { return null; }
+    if (fromUrl) return { slug: fromUrl, age: 0 };
+    var o = readStored();
+    if (!o) return null;
+    var age = (Date.now() - o.ts) / 86400000;
+    if (age > TTL_DAYS) {
+      try { localStorage.removeItem(KEY); } catch(_) {}
+      try { sessionStorage.removeItem(KEY); } catch(_) {}
+      try { document.cookie = KEY + '=;path=/;max-age=0'; } catch(_) {}
+      return null;
+    }
+    return { slug: o.slug, age: Math.round(age * 100) / 100 };
   };
 })();
 </script>
