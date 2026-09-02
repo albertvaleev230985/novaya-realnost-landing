@@ -7771,7 +7771,7 @@ body[data-format="offline"] .only-online{ display:none !important; }
 
     <!-- Контент -->
     <h3 class="signup-title">Спасибо, <span class="signup-thanks-name">друг</span>!</h3>
-    <p class="signup-sub">С вами свяжется менеджер в самое ближайшее время — расскажет детали потока 3 и ответит на вопросы.</p>
+    <p class="signup-sub">С вами свяжется менеджер в самое ближайшее время — расскажет детали курса и ответит на вопросы.</p>
 
     <!-- Ключевая фраза -->
     <div class="launch-tagline">
@@ -8225,22 +8225,25 @@ window.REF_API = 'https://172-245-142-12.nip.io';
 
   /* Возвращает true, если заявка ушла хоть куда-то. */
   window.__nvSendLead = async function(payload, formData){
-    // Перезапуск сервера занимает около восьми секунд, паузы подобраны под это
-    var delays = [0, 2000, 7000];
+    /* Оба канала идут сразу и параллельно: у части провайдеров режется наш
+       адрес приёма, у части сам телеграм. Ждём любой сработавший, а не по
+       очереди, иначе человек лишние секунды смотрит на крутилку. */
+    var both = await Promise.allSettled([
+      toServer(payload),
+      toTelegram(formData),
+    ]);
+    if (both.some(function(r){ return r.status === 'fulfilled'; })) return true;
+
+    // Оба молчат. Сервер мог перезапускаться, это около восьми секунд.
+    var delays = [2000, 7000];
     for (var i = 0; i < delays.length; i++) {
-      if (delays[i]) await sleep(delays[i]);
+      await sleep(delays[i]);
       try {
         await toServer(payload);
         return true;
       } catch (err) {
-        console.warn('[SIGNUP] попытка ' + (i + 1) + ' не прошла:', err.message);
+        console.warn('[SIGNUP] повтор ' + (i + 1) + ' не прошёл:', err.message);
       }
-    }
-    try {
-      await toTelegram(formData);
-      return true;
-    } catch (err) {
-      console.warn('[SIGNUP] запасной канал тоже молчит:', err.message);
     }
     var queue = readQueue();
     queue.push({ payload: payload, at: Date.now() });
