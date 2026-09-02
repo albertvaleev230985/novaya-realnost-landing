@@ -8184,6 +8184,84 @@ window.REF_API = 'https://172-245-142-12.nip.io';
     } catch(_) {}
   }
 
+  /* ═══ Доставка заявки: три попытки, запасной канал, очередь ═══ */
+  var QUEUE_KEY = 'nv_lead_queue';
+
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+
+  function readQueue(){
+    try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); }
+    catch(_) { return []; }
+  }
+
+  function writeQueue(list){
+    try { localStorage.setItem(QUEUE_KEY, JSON.stringify(list.slice(-20))); } catch(_) {}
+  }
+
+  function toServer(payload){
+    return fetch(window.REF_API + '/ref/lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function(r){
+      if (!r.ok) throw new Error('сервер ответил ' + r.status);
+      return r.json();
+    }).then(function(data){
+      if (!data || !data.ok) throw new Error('сервер не принял заявку');
+      return true;
+    });
+  }
+
+  function toTelegram(formData){
+    if (!formData) return Promise.reject(new Error('нет запасного канала'));
+    return fetch('https://api.telegram.org/bot8710283046:AAEX7RcTj0AfQNRm-yssusvvqyHqAPSHQns/sendMessage', {
+      method: 'POST',
+      body: formData
+    }).then(function(r){ return r.json(); }).then(function(data){
+      if (!data || !data.ok) throw new Error('телеграм не принял');
+      return true;
+    });
+  }
+
+  /* Возвращает true, если заявка ушла хоть куда-то. */
+  window.__nvSendLead = async function(payload, formData){
+    // Перезапуск сервера занимает около восьми секунд, паузы подобраны под это
+    var delays = [0, 2000, 7000];
+    for (var i = 0; i < delays.length; i++) {
+      if (delays[i]) await sleep(delays[i]);
+      try {
+        await toServer(payload);
+        return true;
+      } catch (err) {
+        console.warn('[SIGNUP] попытка ' + (i + 1) + ' не прошла:', err.message);
+      }
+    }
+    try {
+      await toTelegram(formData);
+      return true;
+    } catch (err) {
+      console.warn('[SIGNUP] запасной канал тоже молчит:', err.message);
+    }
+    var queue = readQueue();
+    queue.push({ payload: payload, at: Date.now() });
+    writeQueue(queue);
+    return false;
+  };
+
+  /* Отложенные заявки пробуем отправить при каждом заходе на сайт. */
+  (function retryQueue(){
+    var queue = readQueue();
+    if (!queue.length) return;
+    var rest = [];
+    var chain = Promise.resolve();
+    queue.forEach(function(item){
+      chain = chain.then(function(){
+        return toServer(item.payload).catch(function(){ rest.push(item); });
+      });
+    });
+    chain.then(function(){ writeQueue(rest); });
+  })();
+
   /* Читает метку. Сначала адрес страницы, потом хранилище.
      Протухшую (старше 90 дней) выбрасывает. */
   window.__nvRef = function(){
@@ -8292,6 +8370,26 @@ if ('scrollRestoration' in history) {
       thanksName.textContent = name || 'друг';
       formStep.hidden = true;
       thanksStep.hidden = false;
+    }
+
+    /* Если заявка не ушла ни одним каналом, человек должен об этом узнать
+       и иметь способ достучаться. Молчаливое «Спасибо» стоит нам клиента. */
+    function showSendFailed(){
+      var box = document.getElementById('signupFailed');
+      if (!box) {
+        box = document.createElement('div');
+        box.id = 'signupFailed';
+        box.style.cssText = 'margin-top:14px;padding:14px 16px;border-radius:12px;' +
+          'background:rgba(224,116,97,.12);border:1px solid rgba(224,116,97,.4);' +
+          'font-size:14.5px;line-height:1.55';
+        box.innerHTML = 'Заявка не ушла: похоже, пропала связь. ' +
+          'Мы сохранили её и попробуем отправить, когда вы снова откроете страницу.<br><br>' +
+          'Чтобы не ждать, напишите нам прямо сейчас: ' +
+          '<a href="https://t.me/neovidaAi" target="_blank" style="color:#E07461">@neovidaAi</a>';
+        var form = document.getElementById('signupForm');
+        if (form) form.appendChild(box);
+      }
+      box.hidden = false;
     }
 
     // Триггеры открытия — все элементы с [data-signup]
@@ -8415,47 +8513,23 @@ if ('scrollRestoration' in history) {
          к партнёру и сам шлёт уведомление Альберту и партнёру. Если сервер
          недоступен, заявка идёт напрямую в Telegram, как раньше, чтобы
          не потеряться. */
-      function sendDirectToTelegram(){
-        return fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
-          method: 'POST',
-          body: formData
-        }).then(function(r){
-          return r.json();
-        }).then(function(data){
-          if (!data || !data.ok){
-            console.warn('[SIGNUP] Telegram error:', data);
-          }
-        });
-      }
-
-      fetch(window.REF_API + '/ref/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).then(function(r){
-        if (!r.ok) throw new Error('referral api ' + r.status);
-        return r.json();
-      }).then(function(data){
-        if (!data || !data.ok) throw new Error('referral api answered not ok');
-      }).catch(function(err){
-        console.warn('[SIGNUP] referral api недоступен, шлю напрямую:', err);
-        return sendDirectToTelegram();
-      }).finally(function(){
-        // Показываем «Спасибо» в любом случае — пользователь не должен
-        // видеть техническую ошибку, лид у нас уже в payload + console
+      /* Заявка не имеет права потеряться. Порядок такой:
+         1. три попытки достучаться до нашего сервера (он мог
+            перезапускаться, это секунды);
+         2. если не вышло, шлём напрямую в Telegram;
+         3. если и это не вышло, кладём заявку в очередь браузера и честно
+            говорим человеку, что отправка не прошла, с прямой ссылкой на
+            Telegram. Молчаливое «Спасибо» поверх потерянной заявки хуже
+            любой технической ошибки. */
+      window.__nvSendLead(payload, formData).then(function(ok){
         submit.disabled = false;
         submit.classList.remove('is-loading');
-        showThanks(name);
-      });
-
-      // Fallback на случай если сеть подвисла > 4 сек — всё равно показать «Спасибо»
-      setTimeout(function(){
-        if (submit.classList.contains('is-loading')){
-          submit.disabled = false;
-          submit.classList.remove('is-loading');
+        if (ok) {
           showThanks(name);
+        } else {
+          showSendFailed();
         }
-      }, 4000);
+      });
     });
 
     // Сбрасываем ошибочный стейт при наборе
